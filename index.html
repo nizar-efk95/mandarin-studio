@@ -1,0 +1,277 @@
+<!-- ... existing code ... -->
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#020617" />
+  <title>Mandarin Flashcard Hub & Tuesday Study Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+<!-- ... existing code ... -->
+      <!-- Navigation Tabs -->
+      <nav class="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold">
+        <button id="tab-btn-study" class="nav-tab px-4 py-2 rounded-lg bg-cyan-500 text-slate-950 font-bold transition-all flex items-center gap-2">
+          <i class="fa-solid fa-bolt"></i> Study Cards
+        </button>
+        <button id="tab-btn-browser" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fa-solid fa-table-list"></i> Vocab Table
+        </button>
+        <button id="tab-btn-add" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fa-solid fa-circle-plus"></i> Add Tuesday Lesson
+        </button>
+        <button id="tab-btn-export" class="nav-tab px-4 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2">
+          <i class="fa-solid fa-file-export"></i> Anki Export
+        </button>
+        <button id="btn-open-settings" title="Standalone / API Settings" class="px-3 py-2 rounded-lg text-slate-400 hover:text-cyan-300 transition-all flex items-center gap-1.5 border-l border-slate-800 ml-1">
+          <i class="fa-solid fa-gear"></i>
+        </button>
+      </nav>
+    </div>
+  </header>
+<!-- ... existing code ... -->
+  <!-- Notification Toast -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
+    <i id="toast-icon" class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toast-msg">Card added successfully!</span>
+  </div>
+
+  <!-- Standalone Settings Modal (For GitHub Pages Deployment) -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-cloud-gear text-cyan-400"></i> Standalone & Web Hosting Settings
+        </h3>
+        <button id="btn-close-settings" class="text-slate-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+      <div class="space-y-3 text-xs text-slate-300">
+        <p>When hosted on <strong>GitHub Pages</strong>, all cards, study position, and mastery are automatically persisted in your device's browser memory.</p>
+        <div>
+          <label class="block font-semibold text-slate-400 mb-1">Gemini API Key (Optional, for Tuesday PDF AI extraction):</label>
+          <input id="input-standalone-api-key" type="password" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500" />
+          <p class="text-[11px] text-slate-500 mt-1">If using GitHub Pages, you can provide a free key from Google AI Studio. It is saved only to your personal device's storage.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+          <p class="text-[11px] font-semibold text-cyan-400">📲 Tip: Install on Phone / Tablet</p>
+          <p class="text-[11px] text-slate-400">In Safari on iOS, tap <strong>Share ➔ Add to Home Screen</strong>. In Chrome on Android, tap <strong>Menu ➔ Install App</strong> for a native full-screen experience.</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
+        <button id="btn-save-settings" class="py-2 px-5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-all">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+<!-- ... existing code ... -->
+    // Global App Configuration & Cloud Storage Setup
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-mandarin-studio';
+    let db = null;
+    let auth = null;
+    let currentUserId = null;
+
+    let currentDeck = [...INITIAL_DECK];
+    let studyDeck = [];
+    let currentStudyIndex = 0;
+    let isFlipped = false;
+    let masteredIds = new Set();
+    let showPinyin = false; // Disabled by default
+    const LOCAL_STORAGE_KEY = 'mandarin_studio_deck_data_v2';
+    const API_KEY_STORAGE = 'mandarin_studio_user_gemini_key';
+
+    async function initCloudSync() {
+      try {
+        if (typeof __firebase_config === 'undefined') {
+          // Running on GitHub Pages or standalone server: activate full LocalStorage persistence
+          const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+          if (savedData) {
+            try {
+              const parsed = JSON.parse(savedData);
+              if (Array.isArray(parsed.deck) && parsed.deck.length > 0) {
+                currentDeck = parsed.deck.filter(c => c.hanzi !== '張怡君' && c.hanzi !== '馬安同');
+              }
+              if (Array.isArray(parsed.masteredIds)) {
+                masteredIds = new Set(parsed.masteredIds);
+              }
+              if (typeof parsed.studyIndex === 'number') {
+                currentStudyIndex = parsed.studyIndex;
+              }
+              if (parsed.lessonFilter && el.studyLessonFilter) {
+                el.studyLessonFilter.value = parsed.lessonFilter;
+              }
+            } catch (e) {
+              console.warn("Could not load local storage", e);
+            }
+          }
+          updateSyncUI(true, "Device Storage: Active");
+          updateCountsAndFilters();
+          resetStudyDeck(false);
+          filterData();
+          return;
+        }
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        auth = getAuth(app);
+        db = getFirestore(app);
+
+        // Rule 3: Auth Before Queries
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        if (!auth.currentUser) return;
+        currentUserId = auth.currentUser.uid;
+
+        // Rule 1: Strict User Path -> artifacts/{appId}/users/{userId}/progress/study_state
+        const userProgressDoc = doc(db, 'artifacts', appId, 'users', currentUserId, 'progress', 'study_state');
+
+        // Error callback strictly provided
+        onSnapshot(userProgressDoc, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            if (Array.isArray(data.deck) && data.deck.length > 0) {
+              // Ensure personal names are filtered even if previously stored
+              currentDeck = data.deck.filter(c => c.hanzi !== '張怡君' && c.hanzi !== '馬安同');
+            }
+            if (Array.isArray(data.masteredIds)) {
+              masteredIds = new Set(data.masteredIds);
+            }
+            if (typeof data.studyIndex === 'number' && data.studyIndex >= 0) {
+              currentStudyIndex = data.studyIndex;
+            }
+            if (data.lessonFilter && el.studyLessonFilter) {
+              el.studyLessonFilter.value = data.lessonFilter;
+            }
+            updateCountsAndFilters();
+            resetStudyDeck(false); // Preserve restored index
+            filterData();
+            updateSyncUI(true, "Cloud Sync: Saved");
+          } else {
+            // First time initialization: write initial deck state
+            saveDeckAndProgress();
+          }
+        }, (err) => {
+          console.error("Firestore onSnapshot error:", err);
+          updateSyncUI(false, "Sync Error");
+        });
+
+      } catch (err) {
+        console.error("Cloud storage error:", err);
+        updateSyncUI(false, "Sync Offline");
+      }
+    }
+
+    function updateSyncUI(isSynced, message) {
+      if (!el.syncText) return;
+      el.syncText.textContent = message;
+      if (isSynced) {
+        el.cloudSyncStatus.className = "text-[10px] font-semibold text-emerald-400 flex items-center gap-1";
+      } else {
+        el.cloudSyncStatus.className = "text-[10px] font-semibold text-amber-400 flex items-center gap-1";
+      }
+    }
+
+    // Save full deck, review progress, and current study position
+    async function saveDeckAndProgress() {
+      updateCountsAndFilters();
+
+      // Always update local fallback for offline/GitHub Pages compatibility
+      try {
+        localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify({
+          deck: currentDeck,
+          masteredIds: Array.from(masteredIds),
+          studyIndex: currentStudyIndex,
+          lessonFilter: el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL',
+          updatedAt: Date.now()
+        }));
+      } catch (e) {
+        console.warn("Local storage write error:", e);
+      }
+
+      if (!db || !auth || !auth.currentUser) return;
+
+      try {
+        const userId = auth.currentUser.uid;
+        const userProgressDoc = doc(db, 'artifacts', appId, 'users', userId, 'progress', 'study_state');
+        
+        await setDoc(userProgressDoc, {
+          deck: currentDeck,
+          masteredIds: Array.from(masteredIds),
+          studyIndex: currentStudyIndex,
+          lessonFilter: el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL',
+          updatedAt: Date.now()
+        });
+        updateSyncUI(true, "Cloud Sync: Saved");
+      } catch (err) {
+        console.error("Save to Firestore failed:", err);
+        updateSyncUI(false, "Save Failed");
+      }
+    }
+<!-- ... existing code ... -->
+    // API Call to Gemini with Exponential Backoff
+    async function callGeminiExtract(base64Data, mimeType, lessonTag) {
+      // Allow custom key when hosted standalone on GitHub Pages
+      const savedKey = localStorage.getItem(API_KEY_STORAGE) || "";
+      const apiKey = savedKey;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const systemPrompt = `You are a professional Traditional Mandarin teacher in Taiwan specialized in the 'Course in Contemporary Chinese' (當代中文課程) curriculum.
+Your goal is to extract all new vocabulary words, phrases, and example sentences from the user's Tuesday lesson PDF.
+Do NOT extract person proper nouns (names of individuals).
+For every term, generate a structured card object containing:
+- hanzi: Traditional Chinese characters (繁體中文).
+- pinyin: Accurate Pinyin with tonal diacritics (e.g., zhōngwén, jiéyùn).
+- meaning: Concise and accurate English definition.
+- sentence: The lesson's example sentence in Traditional Chinese, or an authentic A1/A2 context sentence if omitted.
+- sentencePinyin: Accurate Pinyin with tonal diacritics for the full example sentence.
+- trans: Natural English translation of the example sentence.
+- tag: The lesson identifier (e.g., "${lessonTag}").`;
+<!-- ... existing code ... -->
+    // Settings Modal handlers
+    const settingsModal = document.getElementById('settings-modal');
+    const btnOpenSettings = document.getElementById('btn-open-settings');
+    const btnCloseSettings = document.getElementById('btn-close-settings');
+    const btnSaveSettings = document.getElementById('btn-save-settings');
+    const inputStandaloneApiKey = document.getElementById('input-standalone-api-key');
+
+    if (btnOpenSettings) {
+      btnOpenSettings.addEventListener('click', () => {
+        if (inputStandaloneApiKey) {
+          inputStandaloneApiKey.value = localStorage.getItem(API_KEY_STORAGE) || "";
+        }
+        settingsModal.classList.remove('hidden');
+      });
+    }
+    if (btnCloseSettings) {
+      btnCloseSettings.addEventListener('click', () => {
+        settingsModal.classList.add('hidden');
+      });
+    }
+    if (btnSaveSettings) {
+      btnSaveSettings.addEventListener('click', () => {
+        if (inputStandaloneApiKey) {
+          localStorage.setItem(API_KEY_STORAGE, inputStandaloneApiKey.value.trim());
+        }
+        settingsModal.classList.add('hidden');
+        showToast("Settings updated!");
+      });
+    }
+
+    window.addEventListener('load', () => {
+      updateCountsAndFilters();
+      resetStudyDeck(false);
+      filterData();
+      updatePinyinUI(); // Ensures Pinyin is disabled by default
+      initCloudSync(); // Starts persistence
+    });
+  </script>
+</body>
+</html>
