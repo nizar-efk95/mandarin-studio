@@ -1,41 +1,39 @@
 <!DOCTYPE html>
-<html lang="zh-TW" class="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Mandarin Studio" />
   <meta name="theme-color" content="#020617" />
   <title>Mandarin Flashcard Hub & Tuesday Study Studio</title>
-  
-  <!-- Tailwind CSS & Font Awesome -->
+
+  <!-- Tailwind CSS & Font Awesome Icons -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-  <!-- Google Fonts -->
+  <!-- PDF.js for Client-Side Zero-API-Key PDF Extraction -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
+  <!-- Google Fonts for Modern Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
-
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'Noto Sans TC', 'sans-serif'],
-            chinese: ['Noto Sans TC', 'sans-serif'],
-          }
-        }
-      }
-    }
-  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 
   <style>
-    /* 3D Flip Card Mechanics */
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background-color: #020617;
+      color: #f8fafc;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .font-hanzi {
+      font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    }
+    /* 3D Flip Card Container & Faces */
     .perspective-1000 {
-      perspective: 1000px;
+      perspective: 1200px;
     }
     .transform-style-3d {
       transform-style: preserve-3d;
@@ -47,411 +45,455 @@
     .rotate-y-180 {
       transform: rotateY(180deg);
     }
-    
-    /* Ruby Pinyin styling */
+    /* Over-character Ruby Typography */
     ruby {
       ruby-align: center;
       ruby-position: over;
     }
     rt {
-      font-size: 0.52em;
-      font-weight: 600;
-      color: #38bdf8;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.38em;
       line-height: 1;
-      user-select: none;
-      letter-spacing: 0.05em;
+      font-weight: 700;
+      color: #38bdf8;
+      letter-spacing: -0.02em;
+      transform: translateY(-2px);
+      display: block;
     }
-    
-    /* When Pinyin is toggled OFF */
-    .hide-pinyin rt {
+    .pinyin-hidden rt {
       display: none !important;
     }
-    .hide-pinyin .pinyin-standalone {
+    .pinyin-hidden .pinyin-subline {
       display: none !important;
     }
-
-    /* Custom Scrollbars */
+    /* Custom Clean Scrollbars */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
     }
     ::-webkit-scrollbar-track {
-      background: #020617;
+      background: #090d16;
     }
     ::-webkit-scrollbar-thumb {
-      background: #334155;
+      background: #1e293b;
       border-radius: 9999px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
+      background: #334155;
     }
   </style>
 </head>
+<body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-cyan-500 selection:text-slate-950">
 
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans antialiased selection:bg-cyan-500 selection:text-slate-950">
-
-  <!-- Application Header -->
-  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 px-4 py-3 sm:px-6">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
+    <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
       
-      <!-- Brand & Sync Status -->
+      <!-- Brand Logo & Count -->
       <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 text-slate-950 font-black text-xl tracking-wider">
-          華
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20">
+          <i class="fa-solid fa-graduation-cap"></i>
         </div>
         <div>
           <div class="flex items-center gap-2">
-            <h1 class="text-base sm:text-lg font-bold text-white tracking-tight">Mandarin Flashcard Hub</h1>
-            <span class="text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 font-semibold uppercase tracking-wider">當代中文</span>
+            <h1 class="font-extrabold text-sm sm:text-base tracking-tight text-white">Mandarin Flashcard Hub</h1>
+            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">當代中文</span>
           </div>
           <div class="flex items-center gap-2 text-xs text-slate-400">
-            <span id="cloud-sync-status" class="text-[11px] font-semibold text-emerald-400 flex items-center gap-1">
-              <i class="fa-solid fa-cloud"></i> <span id="sync-text">Device Storage: Active</span>
+            <span id="header-sync-status" class="text-emerald-400 font-semibold text-[11px] flex items-center gap-1">
+              <i class="fa-solid fa-cloud-check"></i> Device Storage: Active
             </span>
             <span>•</span>
-            <span id="header-card-count" class="text-slate-300 font-medium">108 cards</span>
+            <span id="header-card-count" class="font-semibold text-slate-300">0 cards</span>
           </div>
         </div>
       </div>
 
       <!-- Navigation Tabs -->
-      <nav class="flex items-center bg-slate-950/80 p-1 rounded-xl border border-slate-800 text-xs font-semibold overflow-x-auto max-w-full">
-        <button id="tab-btn-study" class="nav-tab px-3.5 py-2 rounded-lg bg-cyan-500 text-slate-950 font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+      <nav class="flex items-center bg-slate-950/90 p-1 rounded-2xl border border-slate-800 text-xs font-semibold overflow-x-auto max-w-full">
+        <button id="tab-btn-study" class="nav-tab px-3.5 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold transition-all flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-bolt"></i> Study Cards
         </button>
-        <button id="tab-btn-browser" class="nav-tab px-3.5 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-btn-browser" class="nav-tab px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-table-list"></i> Vocab Table
         </button>
-        <button id="tab-btn-add" class="nav-tab px-3.5 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
-          <i class="fa-solid fa-circle-plus"></i> Add Tuesday Lesson
+        <button id="tab-btn-add" class="nav-tab px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
+          <i class="fa-solid fa-circle-plus text-cyan-400"></i> Add Tuesday Lesson
         </button>
-        <button id="tab-btn-export" class="nav-tab px-3.5 py-2 rounded-lg text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
+        <button id="tab-btn-export" class="nav-tab px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap">
           <i class="fa-solid fa-file-export"></i> Anki Export
         </button>
-        <button id="btn-open-settings" title="Standalone Settings" class="px-3 py-2 rounded-lg text-slate-400 hover:text-cyan-300 transition-all flex items-center gap-1.5 border-l border-slate-800 ml-1">
+        <button id="btn-open-settings" title="Standalone & API Settings" class="px-3 py-2 rounded-xl text-slate-400 hover:text-cyan-300 transition-all flex items-center gap-1.5 border-l border-slate-800/80 ml-1">
           <i class="fa-solid fa-gear"></i>
         </button>
       </nav>
+
     </div>
   </header>
 
-  <main class="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
+  <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-start">
 
-    <!-- VIEW 1: FLASHCARD STUDY TAB -->
-    <section id="view-study" class="space-y-6">
+    <!-- VIEW 1: Interactive 3D Study Flashcards -->
+    <section id="view-study" class="space-y-4 max-w-3xl mx-auto w-full">
       
-      <!-- Study Controls & Filter Bar -->
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-3 sm:p-4 rounded-2xl border border-slate-800">
-        <div class="flex items-center gap-2 flex-wrap">
+      <!-- Study Toolbar -->
+      <div class="flex flex-wrap items-center justify-between gap-2.5 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80">
+        <div class="flex items-center gap-2">
           <label for="study-lesson-filter" class="text-xs font-semibold text-slate-400">Lesson:</label>
-          <select id="study-lesson-filter" class="bg-slate-950 border border-slate-700 text-xs font-semibold text-cyan-300 px-3 py-1.5 rounded-xl focus:outline-none focus:border-cyan-500">
-            <option value="ALL">All Lessons (Master Deck)</option>
+          <select id="study-lesson-filter" class="bg-slate-950 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs font-semibold text-cyan-300 focus:outline-none focus:border-cyan-500">
+            <option value="ALL">All Lessons</option>
           </select>
-          <button id="btn-shuffle" title="Shuffle Cards" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 transition-all flex items-center gap-1.5">
-            <i class="fa-solid fa-shuffle text-cyan-400"></i> Shuffle
-          </button>
         </div>
 
-        <div class="flex items-center gap-3">
-          <!-- Pinyin Toggle Button -->
-          <button id="btn-toggle-pinyin" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 transition-all flex items-center gap-1.5 shadow-sm">
-            <i class="fa-solid fa-font"></i> <span id="pinyin-btn-text">Pinyin: OFF</span>
+        <div class="flex items-center gap-2">
+          <!-- Pinyin Toggle Button (Disabled by Default) -->
+          <button id="btn-toggle-pinyin" title="Toggle Pinyin pronunciation guide (Shortcut: P)" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-950 hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5 text-slate-400">
+            <i class="fa-solid fa-language text-cyan-400"></i>
+            <span id="pinyin-btn-text">Pinyin: OFF</span>
           </button>
-          
-          <div class="text-xs font-medium text-slate-400">
-            Progress: <span id="card-index-indicator" class="text-cyan-400 font-bold">1 / 108</span>
-          </div>
-          <span id="mastered-counter-badge" class="px-2.5 py-0.5 rounded-full text-[11px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-bold">
-            0 Mastered
+
+          <!-- Shuffle Button -->
+          <button id="btn-shuffle" title="Shuffle Cards" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-950 hover:bg-slate-800 text-xs font-semibold transition-all text-slate-300">
+            <i class="fa-solid fa-shuffle"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Counter & Mastery Badge -->
+      <div class="flex items-center justify-between px-1 text-xs text-slate-400 font-semibold">
+        <span id="card-index-indicator">Card 1 of 0</span>
+        <div class="flex items-center gap-2">
+          <span id="mastered-counter-badge" class="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-[11px]">
+            <i class="fa-solid fa-circle-check mr-1"></i> 0 Mastered
           </span>
         </div>
       </div>
 
-      <!-- 3D FLIP FLASHCARD CONTAINER -->
-      <div class="w-full flex justify-center py-2">
-        <div id="flashcard-container" class="relative w-full max-w-2xl h-[420px] sm:h-[450px] cursor-pointer perspective-1000 select-none">
-          <div id="flashcard-inner" class="relative w-full h-full transition-transform duration-500 transform-style-3d rounded-3xl shadow-2xl border border-slate-800">
-            
-            <!-- CARD FRONT -->
-            <div id="card-front" class="absolute inset-0 w-full h-full backface-hidden bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border border-slate-800/80">
-              
-              <!-- Card Front Header -->
-              <div class="flex items-center justify-between">
-                <span id="card-tag-front" class="px-3 py-1 rounded-full text-xs font-extrabold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                  Lesson
-                </span>
-                <div class="flex items-center gap-2">
-                  <button id="btn-front-toggle-pinyin" class="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-[11px] font-bold text-slate-300 border border-slate-700 transition-all">
-                    Pinyin
-                  </button>
-                  <button id="btn-front-audio" title="Listen to Pronunciation" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-700 transition-all flex items-center justify-center">
-                    <i class="fa-solid fa-volume-high"></i>
-                  </button>
-                  <button id="btn-front-master" title="Toggle Mastered" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 text-slate-400 border border-slate-700 transition-all flex items-center justify-center">
-                    <i class="fa-solid fa-star"></i>
-                  </button>
-                </div>
+      <!-- 3D Flashcard Container -->
+      <div id="flashcard-container" class="perspective-1000 w-full min-h-[360px] sm:min-h-[420px] cursor-pointer">
+        <div id="flashcard-inner" class="relative w-full h-full min-h-[360px] sm:min-h-[420px] rounded-3xl transition-transform duration-500 transform-style-3d shadow-2xl">
+          
+          <div id="card-front" class="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border-2 border-slate-800 p-6 sm:p-8 flex flex-col justify-between backface-hidden shadow-xl">
+            <!-- Front Top Bar -->
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span id="card-tag-front" class="px-3 py-1 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold uppercase tracking-wider">Lesson</span>
+                <button id="btn-front-toggle-pinyin" class="px-2.5 py-1 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-400 text-[11px] font-bold transition-all">
+                  <i class="fa-solid fa-eye mr-1 text-cyan-400"></i> Pinyin
+                </button>
               </div>
-
-              <!-- Main Hanzi Character & Word with Ruby Pinyin -->
-              <div class="text-center my-auto px-2">
-                <div id="card-hanzi-front" class="text-4xl sm:text-6xl font-chinese font-black text-white tracking-wider mb-3 leading-relaxed">
-                  <!-- Dynamic Ruby Hanzi rendered here -->
-                </div>
-                <!-- Standalone pinyin line for clear reading -->
-                <div id="card-pinyin-sub" class="pinyin-standalone text-lg sm:text-xl font-semibold text-cyan-300 tracking-wide">
-                  <!-- Pinyin subtitle -->
-                </div>
-
-                <!-- Example Sentence with sentence Pinyin -->
-                <div class="mt-6 pt-5 border-t border-slate-800/80 max-w-lg mx-auto">
-                  <p id="card-sentence-front" class="text-base sm:text-lg font-chinese font-semibold text-slate-200 leading-relaxed">
-                    <!-- Example sentence -->
-                  </p>
-                  <p id="card-sentence-pinyin-front" class="pinyin-standalone text-xs sm:text-sm font-medium text-cyan-400/90 mt-1">
-                    <!-- Sentence Pinyin -->
-                  </p>
-                </div>
-              </div>
-
-              <!-- Card Front Footer Hint -->
-              <div class="flex items-center justify-between text-xs text-slate-500">
-                <span><i class="fa-solid fa-repeat mr-1"></i> Click card or Spacebar to flip</span>
-                <span class="text-slate-400 font-mono">Front</span>
+              <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+                <button id="btn-front-audio" title="Listen to pronunciation" class="w-10 h-10 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center text-sm transition-transform active:scale-95">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <button id="btn-front-master" title="Mark as mastered" class="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-sm transition-transform active:scale-95">
+                  <i class="fa-regular fa-star"></i>
+                </button>
               </div>
             </div>
 
-            <!-- CARD BACK -->
-            <div id="card-back" class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 rounded-3xl p-6 sm:p-8 flex flex-col justify-between border border-cyan-500/30 shadow-cyan-500/5">
-              
-              <!-- Card Back Header -->
-              <div class="flex items-center justify-between">
-                <span id="card-tag-back" class="px-3 py-1 rounded-full text-xs font-extrabold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
-                  Lesson
-                </span>
-                <div class="flex items-center gap-2">
-                  <button id="btn-back-audio" title="Listen" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 border border-slate-700 transition-all flex items-center justify-center">
-                    <i class="fa-solid fa-volume-high"></i>
-                  </button>
-                  <button id="btn-back-master" title="Toggle Mastered" class="w-9 h-9 rounded-xl bg-slate-800/80 hover:bg-amber-500 hover:text-slate-950 text-slate-400 border border-slate-700 transition-all flex items-center justify-center">
-                    <i class="fa-solid fa-star"></i>
-                  </button>
-                </div>
+            <!-- Front Central Chinese Character & Dual Pinyin -->
+            <div class="my-auto text-center py-4">
+              <div id="card-hanzi-front" class="font-hanzi text-5xl sm:text-7xl font-black tracking-wider text-white drop-shadow-sm">
+                漢字
               </div>
-
-              <!-- Meaning & Explanations -->
-              <div class="text-center my-auto px-4 space-y-4">
-                <div>
-                  <h2 id="card-meaning-back" class="text-2xl sm:text-3xl font-extrabold text-cyan-400 tracking-tight">
-                    <!-- Meaning -->
-                  </h2>
-                  <div class="flex items-center justify-center gap-2 mt-2">
-                    <span id="card-hanzi-back" class="text-lg font-chinese font-bold text-white"></span>
-                    <span class="text-slate-500">•</span>
-                    <span id="card-pinyin-back" class="text-sm font-semibold text-slate-300 font-mono"></span>
-                  </div>
-                </div>
-
-                <!-- Sentence Context Translation -->
-                <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800 max-w-lg mx-auto text-left">
-                  <div class="text-[11px] font-bold text-cyan-400 uppercase tracking-wider mb-1 flex items-center gap-1.5">
-                    <i class="fa-solid fa-book-open"></i> Example Context
-                  </div>
-                  <p id="card-sentence-back" class="text-sm font-chinese font-medium text-slate-200"></p>
-                  <p id="card-sentence-pinyin-back" class="text-xs text-cyan-300 font-mono mt-0.5"></p>
-                  <p id="card-trans-back" class="text-xs text-slate-400 italic mt-1.5 pt-1.5 border-t border-slate-800/80"></p>
-                </div>
-              </div>
-
-              <!-- Card Back Footer Hint -->
-              <div class="flex items-center justify-between text-xs text-slate-500">
-                <span><i class="fa-solid fa-arrow-left mr-1"></i> Flip back or move to next</span>
-                <span class="text-cyan-400 font-mono">Back / Answer</span>
+              <div id="card-pinyin-sub" class="pinyin-subline text-cyan-300 font-semibold text-lg sm:text-xl tracking-wide mt-3">
+                hàn zì
               </div>
             </div>
 
+            <!-- Front Example Sentence Context -->
+            <div class="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-3.5 sm:p-4 text-center">
+              <div id="card-sentence-front" class="font-hanzi text-base sm:text-lg text-slate-200 font-medium leading-relaxed">
+                這是例句。
+              </div>
+              <div id="card-sentence-pinyin-front" class="pinyin-subline text-xs sm:text-sm text-cyan-400 font-normal mt-1.5">
+                Zhè shì lìjù.
+              </div>
+            </div>
+
+            <div class="text-center text-[11px] font-semibold text-slate-500 mt-2">
+              <i class="fa-solid fa-hand-pointer mr-1"></i> Tap anywhere or press Space to flip
+            </div>
           </div>
+
+          <div id="card-back" class="absolute inset-0 w-full h-full rounded-3xl bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border-2 border-cyan-500/40 p-6 sm:p-8 flex flex-col justify-between backface-hidden rotate-y-180 shadow-2xl">
+            <!-- Back Top Bar -->
+            <div class="flex items-center justify-between">
+              <span id="card-tag-back" class="px-3 py-1 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 text-xs font-bold uppercase tracking-wider">Lesson</span>
+              <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+                <button id="btn-back-audio" title="Listen to pronunciation" class="w-10 h-10 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 flex items-center justify-center text-sm transition-transform active:scale-95">
+                  <i class="fa-solid fa-volume-high"></i>
+                </button>
+                <button id="btn-back-master" title="Mark as mastered" class="w-10 h-10 rounded-2xl bg-slate-800 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 border border-slate-700 hover:border-emerald-500/40 flex items-center justify-center text-sm transition-transform active:scale-95">
+                  <i class="fa-regular fa-star"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Back Content: Meaning & Pinyin -->
+            <div class="my-auto text-center py-2 space-y-2">
+              <div id="card-meaning-back" class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">
+                English Meaning
+              </div>
+              <div class="flex items-center justify-center gap-3">
+                <span id="card-hanzi-back" class="font-hanzi text-xl font-bold text-slate-300">漢字</span>
+                <span class="text-slate-600">•</span>
+                <span id="card-pinyin-back" class="text-lg font-bold text-cyan-300">hàn zì</span>
+              </div>
+            </div>
+
+            <!-- Back Example Sentence & English Translation -->
+            <div class="bg-slate-950/80 border border-slate-800/80 rounded-2xl p-4 text-left space-y-1.5">
+              <div id="card-sentence-back" class="font-hanzi text-sm sm:text-base text-slate-200 font-medium">
+                這是例句。
+              </div>
+              <div id="card-sentence-pinyin-back" class="text-xs text-cyan-400">
+                Zhè shì lìjù.
+              </div>
+              <div id="card-trans-back" class="text-xs sm:text-sm text-slate-400 pt-1 border-t border-slate-800/60 font-normal">
+                This is the example sentence English translation.
+              </div>
+            </div>
+
+            <div class="text-center text-[11px] font-semibold text-slate-500 mt-2">
+              <i class="fa-solid fa-rotate mr-1"></i> Tap to flip back
+            </div>
+          </div>
+
         </div>
       </div>
 
-      <!-- Navigation Controls -->
-      <div class="flex flex-wrap items-center justify-center gap-3">
-        <button id="btn-prev" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 transition-all flex items-center gap-2 shadow-lg active:scale-95">
-          <i class="fa-solid fa-arrow-left"></i> Previous
+      <div class="flex items-center justify-between gap-3 pt-2">
+        <button id="btn-prev" class="flex-1 py-3 px-4 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-700 text-white font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
+          <i class="fa-solid fa-chevron-left"></i> Previous
         </button>
-        <button id="btn-flip" class="px-7 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-black text-sm shadow-xl shadow-cyan-500/20 transition-all active:scale-95 flex items-center gap-2">
+        <button id="btn-flip" class="py-3 px-5 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/40 text-cyan-300 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
           <i class="fa-solid fa-repeat"></i> Flip Card
         </button>
-        <button id="btn-next" class="px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm border border-slate-700 transition-all flex items-center gap-2 shadow-lg active:scale-95">
-          Next <i class="fa-solid fa-arrow-right"></i>
+        <button id="btn-mark-master" class="py-3 px-4 rounded-2xl bg-slate-900 hover:bg-emerald-500/20 border border-slate-700 hover:border-emerald-500/40 text-slate-300 hover:text-emerald-400 font-bold text-xs sm:text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
+          <i id="btn-master-icon" class="fa-regular fa-star"></i> <span id="master-btn-label">Master</span>
         </button>
-        <button id="btn-mark-master" class="px-5 py-3 rounded-2xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-bold text-sm border border-emerald-500/30 transition-all flex items-center gap-2 active:scale-95">
-          <i class="fa-solid fa-star"></i> <span id="master-btn-label">Mark Mastered</span>
+        <button id="btn-next" class="flex-1 py-3 px-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs sm:text-sm shadow-lg shadow-cyan-500/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+          Next <i class="fa-solid fa-chevron-right"></i>
         </button>
       </div>
 
-      <!-- Keyboard Shortcuts Help -->
-      <div class="text-center text-[11px] text-slate-500 flex flex-wrap justify-center items-center gap-3">
-        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">Space</kbd> Flip</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">←</kbd> <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">→</kbd> Prev/Next</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">P</kbd> Pinyin</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">A</kbd> Audio</span>
-        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300 font-mono">M</kbd> Master</span>
+      <!-- Study Keyboard Shortcuts Guide -->
+      <div class="hidden sm:flex items-center justify-center gap-4 text-[11px] text-slate-500 pt-2 font-medium">
+        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">Space</kbd> Flip</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">←</kbd> / <kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">→</kbd> Prev / Next</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">P</kbd> Toggle Pinyin</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">M</kbd> Master</span>
+        <span><kbd class="px-1.5 py-0.5 rounded bg-slate-800 border border-slate-700 text-slate-300">A</kbd> Audio</span>
       </div>
 
     </section>
 
-    <!-- VIEW 2: VOCABULARY TABLE BROWSER -->
     <section id="view-browser" class="space-y-4 hidden">
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
-        <div class="flex items-center gap-2 flex-1 min-w-[200px]">
-          <i class="fa-solid fa-magnifying-glass text-slate-500"></i>
-          <input id="search-input" type="text" placeholder="Search Hanzi, Pinyin, Meaning..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-500" />
+      <!-- Search & Filters -->
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
+        <div class="flex-1 min-w-[240px] relative">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
+          <input id="search-input" type="text" placeholder="Search Hanzi, Pinyin, English, or sentence..." class="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500" />
         </div>
         <div class="flex items-center gap-2">
-          <select id="table-lesson-filter" class="bg-slate-950 border border-slate-800 text-xs font-semibold text-cyan-400 px-3 py-2 rounded-xl focus:outline-none focus:border-cyan-500">
+          <select id="table-lesson-filter" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-cyan-300 focus:outline-none focus:border-cyan-500">
             <option value="ALL">All Lessons</option>
           </select>
-          <span id="table-card-count" class="text-xs font-bold text-slate-400">108 entries</span>
+          <span id="table-card-count" class="text-xs font-semibold text-slate-400 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800">
+            0 words
+          </span>
         </div>
       </div>
 
-      <!-- Table Scroll Wrapper -->
-      <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/40">
-        <table class="w-full text-left text-xs text-slate-300">
-          <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
-            <tr>
+      <!-- Vocabulary Data Table -->
+      <div class="overflow-x-auto rounded-2xl border border-slate-800 bg-slate-900/60 shadow-xl">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="border-b border-slate-800 bg-slate-950/80 text-slate-400 font-bold uppercase tracking-wider">
+              <th class="p-3 text-center w-12">#</th>
               <th class="p-3">Hanzi</th>
               <th class="p-3">Pinyin</th>
               <th class="p-3">Meaning</th>
-              <th class="p-3 hidden sm:table-cell">Example Sentence</th>
-              <th class="p-3 text-center">Audio</th>
-              <th class="p-3 text-center">Action</th>
+              <th class="p-3">Example Sentence</th>
+              <th class="p-3 text-center">Lesson</th>
+              <th class="p-3 text-center w-20">Actions</th>
             </tr>
           </thead>
-          <tbody id="vocab-table-body" class="divide-y divide-slate-800/60 font-chinese">
-            <!-- Dynamic rows inserted here -->
+          <tbody id="vocab-table-body" class="divide-y divide-slate-800/60">
+            <!-- Populated via JavaScript -->
           </tbody>
         </table>
       </div>
     </section>
 
-    <!-- VIEW 3: ADD TUESDAY LESSON (AI UPLOADER & MANUAL) -->
-    <section id="view-add" class="space-y-6 hidden">
-      <div class="bg-slate-900/70 p-6 rounded-3xl border border-slate-800 space-y-6">
+    <section id="view-add" class="space-y-5 hidden max-w-2xl mx-auto w-full">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
         
-        <div class="border-b border-slate-800 pb-4 flex items-center justify-between flex-wrap gap-2">
+        <!-- Section Header -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <i class="fa-solid fa-file-pdf text-cyan-400"></i> Tuesday Lesson PDF Importer
+              <i class="fa-solid fa-file-circle-plus text-cyan-400"></i> Tuesday Lesson Importer
             </h2>
-            <p class="text-xs text-slate-400 mt-0.5">Upload your weekly vocabulary or grammar PDF to extract new flashcards directly into your deck.</p>
+            <p class="text-xs text-slate-400 mt-0.5">Upload your weekly vocabulary or grammar PDF to extract flashcards directly.</p>
           </div>
-          <button id="btn-export-backup" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-cyan-400 border border-slate-700 flex items-center gap-1.5">
-            <i class="fa-solid fa-cloud-arrow-down"></i> Backup Deck (.JSON)
-          </button>
-        </div>
-
-        <!-- Drag & Drop Upload Zone -->
-        <div id="drop-zone" class="border-2 border-dashed border-slate-700 hover:border-cyan-500 rounded-3xl p-6 sm:p-8 text-center cursor-pointer transition-all bg-slate-950/50">
-          <input type="file" id="pdf-file-input" accept="application/pdf" class="hidden" />
-          <div class="space-y-2">
-            <div class="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl">
-              <i class="fa-solid fa-cloud-arrow-up"></i>
-            </div>
-            <p class="text-sm font-bold text-white">Click or drag & drop your Tuesday lesson PDF here</p>
-            <p class="text-xs text-slate-500">Supports weekly vocabulary sheets, grammar exercises, and teacher slides</p>
-            <div id="selected-file-name" class="text-xs font-semibold text-cyan-300 hidden pt-2"></div>
-          </div>
-        </div>
-
-        <!-- Extraction Controls -->
-        <div class="flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2">
-            <label for="input-lesson-tag" class="text-xs font-semibold text-slate-400">Lesson Tag:</label>
-            <input id="input-lesson-tag" type="text" placeholder="e.g., Lesson12" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-cyan-500 w-32" />
+            <button id="btn-export-backup" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-300 text-xs font-bold border border-slate-700 transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-cloud-arrow-down"></i> Backup (.JSON)
+            </button>
+            <label for="restore-file-input" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold border border-slate-700 transition-all flex items-center gap-1.5 cursor-pointer">
+              <i class="fa-solid fa-cloud-arrow-up"></i> Restore
+              <input type="file" id="restore-file-input" accept=".json,application/json" class="hidden" />
+            </label>
           </div>
-          <button id="btn-extract-pdf" class="px-6 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-bold text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2 disabled:opacity-50">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Extract & Generate Flashcards
+        </div>
+
+        <!-- Mode Toggle: PDF Upload vs Quick Text Paste -->
+        <div class="flex items-center gap-2 border-b border-slate-800/80 pb-3">
+          <button id="mode-btn-pdf" class="px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold transition-all">
+            <i class="fa-solid fa-file-pdf mr-1"></i> PDF Lesson Importer
+          </button>
+          <button id="mode-btn-manual" class="px-3 py-1.5 rounded-xl text-slate-400 hover:text-white border border-transparent text-xs font-bold transition-all">
+            <i class="fa-solid fa-keyboard mr-1"></i> Quick Text / Notes Paste
           </button>
         </div>
 
-        <!-- Extraction Preview Zone -->
-        <div id="extraction-preview-container" class="hidden space-y-3 pt-4 border-t border-slate-800">
+        <!-- Section A: Drag & Drop PDF Zone using native HTML label -->
+        <div id="section-pdf-upload" class="space-y-4">
+          <label for="pdf-file-input" id="drop-zone" class="block border-2 border-dashed border-slate-700 hover:border-cyan-400 rounded-3xl p-6 sm:p-8 text-center cursor-pointer transition-all bg-slate-950/50 group">
+            <input type="file" id="pdf-file-input" accept="application/pdf,.pdf" class="sr-only" />
+            <div class="space-y-3 pointer-events-none">
+              <div class="w-14 h-14 mx-auto rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center text-2xl group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all">
+                <i class="fa-solid fa-file-arrow-up"></i>
+              </div>
+              <div>
+                <p class="text-sm font-bold text-white group-hover:text-cyan-300 transition-colors">Click to browse or drag & drop your Tuesday PDF here</p>
+                <p class="text-xs text-slate-500 mt-1">Supports lesson sheets, grammar exercises, and teacher vocabulary slides</p>
+              </div>
+              <div id="selected-file-badge" class="hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 text-xs font-bold">
+                <i class="fa-solid fa-file-circle-check"></i>
+                <span id="selected-file-name-text">No file selected</span>
+              </div>
+            </div>
+          </label>
+
+          <!-- On-screen feedback banner -->
+          <div id="importer-status-banner" class="hidden p-3 rounded-2xl text-xs font-semibold flex items-center justify-between border"></div>
+
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <label for="input-lesson-tag" class="text-xs font-semibold text-slate-400">Lesson Tag:</label>
+              <input id="input-lesson-tag" type="text" placeholder="e.g., Lesson12" value="Lesson12" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-cyan-500 w-36" />
+            </div>
+            <button id="btn-extract-pdf" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-slate-950 font-extrabold text-xs shadow-lg shadow-cyan-500/20 transition-all flex items-center gap-2 disabled:opacity-50">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> Extract & Generate Flashcards
+            </button>
+          </div>
+        </div>
+
+        <!-- Section B: Manual / Quick Text Paste Zone (No API Key Required) -->
+        <div id="section-manual-paste" class="space-y-4 hidden">
+          <div class="space-y-1.5">
+            <label for="manual-paste-input" class="text-xs font-semibold text-slate-300">Paste Vocabulary / Notes:</label>
+            <p class="text-[11px] text-slate-500">Paste your raw class notes, TSV lines, or format: <code class="text-cyan-400">Hanzi, Pinyin, Meaning, Example Sentence</code></p>
+            <textarea id="manual-paste-input" rows="6" placeholder="逛, guàng, to stroll around, 這週末我們打算去逛夜市。&#10;特別, tèbié, special, 這個蛋糕的味道很特別。" class="w-full p-3 rounded-2xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-cyan-500 font-mono"></textarea>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <div class="flex items-center gap-2">
+              <label for="input-manual-tag" class="text-xs font-semibold text-slate-400">Tag:</label>
+              <input id="input-manual-tag" type="text" placeholder="Lesson12" value="Lesson12" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs font-semibold text-white focus:outline-none focus:border-cyan-500 w-32" />
+            </div>
+            <button id="btn-add-manual" class="px-5 py-2.5 rounded-xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Add Words to Deck
+            </button>
+          </div>
+        </div>
+
+        <!-- Extraction Preview Staging Area -->
+        <div id="extraction-preview-container" class="space-y-3 hidden border-t border-slate-800 pt-4">
           <div class="flex items-center justify-between">
-            <h3 class="text-xs font-bold text-cyan-400 uppercase tracking-wider">Extracted Cards Preview</h3>
-            <button id="btn-confirm-add-extracted" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5">
+            <h3 id="extraction-preview-title" class="text-xs font-bold text-cyan-300">Extracted Flashcards Preview (0 found)</h3>
+            <button id="btn-confirm-add-extracted" class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-extrabold text-xs shadow-lg transition-all flex items-center gap-1.5">
               <i class="fa-solid fa-check"></i> Add All to Study Deck
             </button>
           </div>
-          <div id="extracted-cards-list" class="max-h-60 overflow-y-auto space-y-2 pr-1"></div>
+          <div id="extracted-cards-list" class="max-h-60 overflow-y-auto space-y-2 pr-1 text-xs">
+            <!-- Rendered preview rows -->
+          </div>
         </div>
 
       </div>
     </section>
 
-    <!-- VIEW 4: ANKI EXPORT TAB -->
-    <section id="view-export" class="space-y-6 hidden">
-      <div class="bg-slate-900/70 p-6 rounded-3xl border border-slate-800 space-y-5">
+    <section id="view-export" class="space-y-5 hidden max-w-2xl mx-auto w-full">
+      <div class="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl">
         <div>
           <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <i class="fa-solid fa-file-export text-cyan-400"></i> Export to Anki Desktop & Mobile
+            <i class="fa-solid fa-file-export text-cyan-400"></i> Anki Exporter
           </h2>
-          <p class="text-xs text-slate-400 mt-1">Download pre-validated files formatted specifically to eliminate multi-column parsing errors.</p>
+          <p class="text-xs text-slate-400 mt-1">Download your deck formatted for Anki desktop and mobile apps.</p>
         </div>
 
+        <!-- Download Action Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button id="btn-download-tab" class="p-4 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-cyan-500/30 text-left transition-all group">
-            <div class="text-cyan-400 text-lg mb-1"><i class="fa-solid fa-file-lines"></i></div>
-            <div class="font-bold text-white text-xs">Download .TXT (Tab)</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">Recommended for Anki Desktop</div>
+          <button id="btn-download-tab" class="p-4 rounded-2xl bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 font-bold text-xs text-left transition-all space-y-1">
+            <div class="text-sm font-extrabold flex items-center gap-1.5">
+              <i class="fa-solid fa-download"></i> .TXT (Tab)
+            </div>
+            <p class="text-[11px] text-slate-400 font-normal">Standard TSV format. Eliminates comma splitting errors.</p>
           </button>
 
-          <button id="btn-download-csv" class="p-4 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-slate-700 text-left transition-all group">
-            <div class="text-emerald-400 text-lg mb-1"><i class="fa-solid fa-file-csv"></i></div>
-            <div class="font-bold text-white text-xs">Download .CSV (Comma)</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">RFC 4180 Quoted Standard</div>
+          <button id="btn-download-csv" class="p-4 rounded-2xl bg-slate-950 hover:bg-slate-800 border border-slate-700 text-slate-200 font-bold text-xs text-left transition-all space-y-1">
+            <div class="text-sm font-extrabold flex items-center gap-1.5 text-white">
+              <i class="fa-solid fa-file-csv text-blue-400"></i> .CSV File
+            </div>
+            <p class="text-[11px] text-slate-400 font-normal">Quoted CSV format for spreadsheets and Anki.</p>
           </button>
 
-          <button id="btn-download-2field" class="p-4 rounded-2xl bg-slate-950 hover:bg-slate-800/80 border border-purple-500/30 text-left transition-all group">
-            <div class="text-purple-400 text-lg mb-1"><i class="fa-solid fa-layer-group"></i></div>
-            <div class="font-bold text-white text-xs">Download 2-Field Deck</div>
-            <div class="text-[11px] text-slate-500 mt-0.5">Fits Default "Basique" Note Type</div>
+          <button id="btn-download-2field" class="p-4 rounded-2xl bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-purple-300 font-bold text-xs text-left transition-all space-y-1">
+            <div class="text-sm font-extrabold flex items-center gap-1.5">
+              <i class="fa-solid fa-clone"></i> 2-Field Deck
+            </div>
+            <p class="text-[11px] text-slate-400 font-normal">Pre-merged Recto/Verso for Anki's default Basic note type.</p>
           </button>
         </div>
 
-        <div>
-          <label class="block text-xs font-semibold text-slate-400 mb-1">Raw File Preview:</label>
-          <textarea id="raw-export-preview" readonly class="w-full h-44 bg-slate-950 border border-slate-800 rounded-2xl p-3 font-mono text-[11px] text-cyan-300/90 focus:outline-none"></textarea>
+        <!-- Raw Text Preview Area -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between text-xs font-semibold text-slate-400">
+            <span>Raw Export Preview:</span>
+            <button id="btn-copy-raw" class="text-cyan-400 hover:text-cyan-300 flex items-center gap-1">
+              <i class="fa-solid fa-copy"></i> Copy to clipboard
+            </button>
+          </div>
+          <textarea id="raw-export-preview" readonly rows="8" class="w-full p-3 rounded-2xl bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300 focus:outline-none resize-none"></textarea>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- Notification Toast -->
-  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
-    <i id="toast-icon" class="fa-solid fa-check text-emerald-400"></i>
-    <span id="toast-msg">Card updated!</span>
-  </div>
-
-  <!-- Standalone Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
-          <i class="fa-solid fa-gear text-cyan-400"></i> Standalone & GitHub Pages Settings
+          <i class="fa-solid fa-gear text-cyan-400"></i> Settings & Gemini API Key
         </h3>
         <button id="btn-close-settings" class="text-slate-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
       <div class="space-y-3 text-xs text-slate-300">
-        <p>All flashcards, reviews, and progress are stored automatically in your browser's persistent storage on this device.</p>
+        <p>All flashcards and review progress are permanently stored in your device's browser storage.</p>
         <div>
-          <label class="block font-semibold text-slate-400 mb-1">Gemini API Key (For Tuesday PDF AI Extraction):</label>
+          <label for="input-standalone-api-key" class="block font-semibold text-slate-400 mb-1">Gemini API Key (Optional, for AI PDF parsing):</label>
           <input id="input-standalone-api-key" type="password" placeholder="AIzaSy..." class="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500" />
-          <p class="text-[11px] text-slate-500 mt-1">Get a free key from Google AI Studio. It is saved only to this device.</p>
+          <p class="text-[11px] text-slate-500 mt-1">If empty, the app automatically uses client-side PDF.js parsing without any API key required.</p>
+        </div>
+        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+          <p class="text-[11px] font-semibold text-cyan-400">📲 Mobile PWA Tip:</p>
+          <p class="text-[11px] text-slate-400">In Safari on iPhone, tap <strong>Share ➔ Add to Home Screen</strong>. In Chrome on Android, tap <strong>Menu ➔ Install App</strong> for a full-screen app experience.</p>
         </div>
       </div>
       <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-800">
@@ -462,94 +504,239 @@
     </div>
   </div>
 
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
+    <i class="fa-solid fa-check text-emerald-400"></i>
+    <span id="toast-msg">Card updated!</span>
+  </div>
+
   <script>
-    // Master Curriculum Dataset (Personal names excluded)
+    // Initial Master Dataset (Lessons 2, 6, 7, 8, 9, 10, 11) - Personal names filtered out
     const INITIAL_DECK = [
-      { id: "L02_01", hanzi: "的", pinyin: "de", meaning: "possessive/modifying particle", sentence: "我的芒果很好吃。", sentencePinyin: "wǒ de mángguǒ hěn hǎochī.", trans: "My mango is delicious.", tag: "Lesson02" },
-      { id: "L02_02", hanzi: "家人", pinyin: "jiārén", meaning: "family members", sentence: "我的家人都住在台灣。", sentencePinyin: "wǒ de jiārén dōu zhù zài Táiwān.", trans: "My family all live in Taiwan.", tag: "Lesson02" },
-      { id: "L02_03", hanzi: "家", pinyin: "jiā", meaning: "home / house / family", sentence: "我的家在那裡。", sentencePinyin: "wǒ de jiā zài nàlǐ.", trans: "My home is over there.", tag: "Lesson02" },
-      { id: "L02_04", hanzi: "漂亮", pinyin: "piàoliang", meaning: "pretty / beautiful", sentence: "這房子不漂亮。", sentencePinyin: "zhè fángzi bú piàoliang.", trans: "This house is not pretty.", tag: "Lesson02" },
-      { id: "L02_05", hanzi: "房子", pinyin: "fángzi", meaning: "house / building", sentence: "他們的房子很大。", sentencePinyin: "tāmen de fángzi hěn dà.", trans: "Their house is very big.", tag: "Lesson02" },
-      { id: "L02_06", hanzi: "坐", pinyin: "zuò", meaning: "to sit / to take (transport)", sentence: "我們坐捷運去台北101。", sentencePinyin: "wǒmen zuò jiéyùn qù Táiběi yī líng yī.", trans: "We take the MRT to Taipei 101.", tag: "Lesson02" },
-      { id: "L02_07", hanzi: "幾", pinyin: "jǐ", meaning: "how many / how much", sentence: "你家有幾個人？", sentencePinyin: "nǐ jiā yǒu jǐ ge rén?", trans: "How many people are there in your family?", tag: "Lesson02" },
-      { id: "L02_08", hanzi: "個", pinyin: "ge / gè", meaning: "general measure word", sentence: "你有幾個學生？", sentencePinyin: "nǐ yǒu jǐ ge xuéshēng?", trans: "How many students do you have?", tag: "Lesson02" },
-      { id: "L02_09", hanzi: "沒", pinyin: "méi", meaning: "not / have not", sentence: "我沒有哥哥。", sentencePinyin: "wǒ méiyǒu gēge.", trans: "I don't have an older brother.", tag: "Lesson02" },
-      { id: "L02_10", hanzi: "寫字", pinyin: "xiězì", meaning: "to write characters", sentence: "我寫中文字。", sentencePinyin: "wǒ xiě zhōngwén zì.", trans: "I write Chinese characters.", tag: "Lesson02" },
-      { id: "L02_11", hanzi: "兄弟", pinyin: "xiōngdì", meaning: "brothers", sentence: "我有兩個兄弟。", sentencePinyin: "wǒ yǒu liǎng ge xiōngdì.", trans: "I have two brothers.", tag: "Lesson02" },
-      { id: "L02_12", hanzi: "姊妹", pinyin: "jiěmèi", meaning: "sisters", sentence: "你有姊妹嗎？", sentencePinyin: "nǐ yǒu jiěmèi ma?", trans: "Do you have sisters?", tag: "Lesson02" },
-      { id: "L02_13", hanzi: "五", pinyin: "wǔ", meaning: "five", sentence: "我家有五個人。", sentencePinyin: "wǒ jiā yǒu wǔ ge rén.", trans: "There are five people in my family.", tag: "Lesson02" },
-      { id: "L02_14", hanzi: "兩", pinyin: "liǎng", meaning: "two (quantity)", sentence: "我有兩本書。", sentencePinyin: "wǒ yǒu liǎng běn shū.", trans: "I have two books.", tag: "Lesson02" },
-      { id: "L06_01", hanzi: "他們", pinyin: "tāmen", meaning: "they / them", sentence: "他們去大學學中文。", sentencePinyin: "tāmen qù dàxué xué zhōngwén.", trans: "They go to the university to learn Chinese.", tag: "Lesson06" },
-      { id: "L06_02", hanzi: "學校", pinyin: "xuéxiào", meaning: "school", sentence: "你家附近有沒有學校？", sentencePinyin: "nǐ jiā fùjìn yǒu méiyǒu xuéxiào?", trans: "Is there a school near your home?", tag: "Lesson06" },
-      { id: "L06_03", hanzi: "同學", pinyin: "tóngxué", meaning: "classmate", sentence: "他是我的中文課同學。", sentencePinyin: "tā shì wǒ de zhōngwén kè tóngxué.", trans: "He is my Chinese class classmate.", tag: "Lesson06" },
-      { id: "L06_04", hanzi: "學生", pinyin: "xuéshēng", meaning: "student", sentence: "學生們在教室裡面。", sentencePinyin: "xuéshēngmen zài jiàoshì lǐmiàn.", trans: "The students are inside the classroom.", tag: "Lesson06" },
-      { id: "L06_05", hanzi: "在", pinyin: "zài", meaning: "at / in / on", sentence: "我在台灣工作。", sentencePinyin: "wǒ zài Táiwān gōngzuò.", trans: "I work in Taiwan.", tag: "Lesson06" },
-      { id: "L06_06", hanzi: "山上", pinyin: "shānshàng", meaning: "on the mountain", sentence: "在台灣爬山很有趣。", sentencePinyin: "zài Táiwān páshān hěn yǒuqù.", trans: "Hiking in Taiwan is very interesting.", tag: "Lesson06" },
-      { id: "L06_07", hanzi: "哪裡", pinyin: "nǎlǐ", meaning: "where", sentence: "你知道我的手機在哪裡嗎？", sentencePinyin: "nǐ zhīdào wǒ de shǒujī zài nǎlǐ ma?", trans: "Do you know where my cell phone is?", tag: "Lesson06" },
-      { id: "L06_08", hanzi: "遠", pinyin: "yuǎn", meaning: "far", sentence: "我家離公司很遠。", sentencePinyin: "wǒ jiā lí gōngsī hěn yuǎn.", trans: "My home is far from the company.", tag: "Lesson06" },
-      { id: "L06_09", hanzi: "近", pinyin: "jìn", meaning: "near / close", sentence: "我家離捷運站很近。", sentencePinyin: "wǒ jiā lí jiéyùn zhàn hěn jìn.", trans: "My home is very close to the MRT station.", tag: "Lesson06" },
-      { id: "L06_10", hanzi: "那裡", pinyin: "nàlǐ", meaning: "there", sentence: "我的車子停在那裡。", sentencePinyin: "wǒ de chēzi tíng zài nàlǐ.", trans: "My car is parked over there.", tag: "Lesson06" },
-      { id: "L06_11", hanzi: "這裡", pinyin: "zhèlǐ", meaning: "here", sentence: "這裡可以拍照嗎？", sentencePinyin: "zhèlǐ kěyǐ pāizhào ma?", trans: "Can we take photos here?", tag: "Lesson06" },
-      { id: "L06_12", hanzi: "風景", pinyin: "fēngjǐng", meaning: "scenery / landscape", sentence: "宜蘭山上的風景很漂亮。", sentencePinyin: "Yílán shānshàng de fēngjǐng hěn piàoliang.", trans: "The scenery on the mountain in Yilan is very beautiful.", tag: "Lesson06" },
-      { id: "L06_13", hanzi: "美", pinyin: "měi", meaning: "beautiful / pretty", sentence: "台南的風景也很美。", sentencePinyin: "Táinán de fēngjǐng yě hěn měi.", trans: "Tainan's scenery is also very beautiful.", tag: "Lesson06" },
-      { id: "L06_14", hanzi: "前面", pinyin: "qiánmiàn", meaning: "front / in front of", sentence: "車子在我的前面。", sentencePinyin: "chēzi zài wǒ de qiánmiàn.", trans: "The car is in front of me.", tag: "Lesson06" },
-      { id: "L06_15", hanzi: "後面", pinyin: "hòumiàn", meaning: "back / behind", sentence: "捷運站在我家後面。", sentencePinyin: "jiéyùn zhàn zài wǒ jiā hòumiàn.", trans: "The MRT station is behind my home.", tag: "Lesson06" },
-      { id: "L06_16", hanzi: "海", pinyin: "hǎi", meaning: "sea / ocean", sentence: "我去宜蘭衝浪看海。", sentencePinyin: "wǒ qù Yílán chōnglàng kàn hǎi.", trans: "I go to Yilan to surf and see the ocean.", tag: "Lesson06" },
-      { id: "L06_17", hanzi: "山", pinyin: "shān", meaning: "mountain", sentence: "台灣地震很多，所以山很多。", sentencePinyin: "Táiwān dìzhèn hěn duō, suǒyǐ shān hěn duō.", trans: "Taiwan has many earthquakes, so it has many mountains.", tag: "Lesson06" },
-      { id: "L06_18", hanzi: "真的", pinyin: "zhēnde", meaning: "real / really", sentence: "這是真的新聞。", sentencePinyin: "zhè shì zhēnde xīnwén.", trans: "This is real news.", tag: "Lesson06" },
-      { id: "L06_19", hanzi: "地方", pinyin: "dìfāng", meaning: "place / location", sentence: "我覺得花蓮是很漂亮的地方。", sentencePinyin: "wǒ juéde Huālián shì hěn piàoliang de dìfāng.", trans: "I think Hualien is a very beautiful place.", tag: "Lesson06" },
-      { id: "L06_20", hanzi: "現在", pinyin: "xiànzài", meaning: "now", sentence: "我們現在在上課。", sentencePinyin: "wǒmen xiànzài zài shàngkè.", trans: "We are having class right now.", tag: "Lesson06" },
-      { id: "L06_21", hanzi: "附近", pinyin: "fùjìn", meaning: "nearby / vicinity", sentence: "我家附近有很多便利商店。", sentencePinyin: "wǒ jiā fùjìn yǒu hěn duō biànlì shāngdiàn.", trans: "There are many convenience stores near my house.", tag: "Lesson06" },
-      { id: "L06_22", hanzi: "樓下", pinyin: "lóuxià", meaning: "downstairs", sentence: "我現在要去樓下買晚餐。", sentencePinyin: "wǒ xiànzài yào qù lóuxià mǎi wǎncān.", trans: "I am going downstairs now to buy dinner.", tag: "Lesson06" },
-      { id: "L06_23", hanzi: "樓上", pinyin: "lóushàng", meaning: "upstairs", sentence: "我的朋友住在樓上。", sentencePinyin: "wǒ de péngyǒu zhù zài lóushàng.", trans: "My friend lives upstairs.", tag: "Lesson06" },
-      { id: "L06_24", hanzi: "找", pinyin: "zhǎo", meaning: "to look for / to visit (someone)", sentence: "我想去台南找我的朋友。", sentencePinyin: "wǒ xiǎng qù Táinán zhǎo wǒ de péngyǒu.", trans: "I want to go to Tainan to visit my friend.", tag: "Lesson06" },
-      { id: "L06_25", hanzi: "朋友", pinyin: "péngyǒu", meaning: "friend", sentence: "我常常跟朋友見面。", sentencePinyin: "wǒ chángcháng gēn péngyǒu jiànmiàn.", trans: "I often meet up with friends.", tag: "Lesson06" },
-      { id: "L06_26", hanzi: "上課", pinyin: "shàngkè", meaning: "to attend class / class begins", sentence: "不好意思，我今天晚上有事，所以不能上課。", sentencePinyin: "bùhǎoyìsi, wǒ jīntiān wǎnshàng yǒushì, suǒyǐ bùnéng shàngkè.", trans: "Excuse me, I am busy tonight, so I cannot attend class.", tag: "Lesson06" },
-      { id: "L06_27", hanzi: "花蓮", pinyin: "Huālián", meaning: "Hualien (county in Taiwan)", sentence: "我從宜蘭騎摩托車到花蓮。", sentencePinyin: "wǒ cóng Yílán qí mótuōchē dào Huālián.", trans: "I rode a scooter from Yilan to Hualien.", tag: "Lesson06" },
-      { id: "L06_28", hanzi: "聽說", pinyin: "tīngshuō", meaning: "to hear of / I heard that", sentence: "我聽說義大利的菜都很好吃。", sentencePinyin: "wǒ tīngshuō Yìdàlì de cài dōu hěn hǎochī.", trans: "I heard that Italian food is all delicious.", tag: "Lesson06" },
-      { id: "L06_29", hanzi: "方便", pinyin: "fāngbiàn", meaning: "convenient", sentence: "台北有捷運、公車很多很方便。", sentencePinyin: "Táiběi yǒu jiéyùn, gōngchē hěn duō hěn fāngbiàn.", trans: "Taipei has MRT and many buses, very convenient.", tag: "Lesson06" },
-      { id: "L06_30", hanzi: "東西", pinyin: "dōngxī", meaning: "thing / object / stuff", sentence: "這個東西多少錢？", sentencePinyin: "zhè gè dōngxī duōshǎo qián?", trans: "How much is this item?", tag: "Lesson06" },
-      { id: "L06_31", hanzi: "方向", pinyin: "fāngxiàng", meaning: "direction", sentence: "你的家是哪個方向？", sentencePinyin: "nǐ de jiā shì nǎ gè fāngxiàng?", trans: "Which direction is your home?", tag: "Lesson06" },
-      { id: "L06_32", hanzi: "外面", pinyin: "wàimiàn", meaning: "outside", sentence: "外面現在在下雨。", sentencePinyin: "wàimiàn xiànzài zài xiàyǔ.", trans: "It is raining outside right now.", tag: "Lesson06" },
-      { id: "L06_33", hanzi: "裡面", pinyin: "lǐmiàn", meaning: "inside", sentence: "包包裡面是空的。", sentencePinyin: "bāobāo lǐmiàn shì kōng de.", trans: "The inside of the bag is empty.", tag: "Lesson06" },
-      { id: "L06_34", hanzi: "商店", pinyin: "shāngdiàn", meaning: "store / shop", sentence: "捷運站附近有很多商店。", sentencePinyin: "jiéyùn zhàn fùjìn yǒu hěn duō shāngdiàn.", trans: "There are many shops near the MRT station.", tag: "Lesson06" },
-      { id: "L06_35", hanzi: "吃飯", pinyin: "chīfàn", meaning: "to have a meal / to eat rice", sentence: "你喜歡吃義大利燉飯還是紫米飯？", sentencePinyin: "nǐ xǐhuān chī Yìdàlì dùnfàn háishì zǐmǐfàn?", trans: "Do you like eating risotto or purple rice?", tag: "Lesson06" },
-      { id: "L06_36", hanzi: "宿舍", pinyin: "sùshè", meaning: "dormitory", sentence: "學生宿舍在大學裡面。", sentencePinyin: "xuéshēng sùshè zài dàxué lǐmiàn.", trans: "The student dormitory is inside the university.", tag: "Lesson06" },
-      { id: "L06_37", hanzi: "樓", pinyin: "lóu", meaning: "floor / storey", sentence: "我們的教室在這棟大樓的2樓。", sentencePinyin: "wǒmen de jiàoshì zài zhè dòng dàlóu de èr lóu.", trans: "Our classroom is on the 2nd floor of this building.", tag: "Lesson06" },
-      { id: "L06_38", hanzi: "棟", pinyin: "dòng", meaning: "measure word for buildings", sentence: "我公司附近有很多棟大樓。", sentencePinyin: "wǒ gōngsī fùjìn yǒu hěn duō dòng dàlóu.", trans: "There are many tall buildings near my company.", tag: "Lesson06" },
-      { id: "L06_39", hanzi: "大樓", pinyin: "dàlóu", meaning: "tall building", sentence: "那棟大樓非常高。", sentencePinyin: "nà dòng dàlóu fēicháng gāo.", trans: "That building is very tall.", tag: "Lesson06" },
-      { id: "L06_40", hanzi: "圖書館", pinyin: "túshūguǎn", meaning: "library", sentence: "你大學的時候常常去圖書館嗎？", sentencePinyin: "nǐ dàxué de shíhòu chángcháng qù túshūguǎn ma?", trans: "Did you often go to the library when in college?", tag: "Lesson06" },
-      { id: "L06_41", hanzi: "旁邊", pinyin: "pángbiān", meaning: "beside / next to", sentence: "我家旁邊有商店。", sentencePinyin: "wǒ jiā pángbiān yǒu shāngdiàn.", trans: "There are shops next to my home.", tag: "Lesson06" },
-      { id: "L06_42", hanzi: "教室", pinyin: "jiàoshì", meaning: "classroom", sentence: "學生們在教室裡面看書。", sentencePinyin: "xuéshēngmen zài jiàoshì lǐmiàn kàn shū.", trans: "The students are reading inside the classroom.", tag: "Lesson06" },
-      { id: "L06_43", hanzi: "游泳池", pinyin: "yóuyǒngchí", meaning: "swimming pool", sentence: "外國年輕人喜歡去游泳池游泳。", sentencePinyin: "wàiguó niánqīngrén xǐhuān qù yóuyǒngchí yóuyǒng.", trans: "Young foreign people like going to the swimming pool to swim.", tag: "Lesson06" },
-      { id: "L07_01", hanzi: "點", pinyin: "diǎn", meaning: "o'clock / to order food", sentence: "我要點一碗牛肉麵。", sentencePinyin: "wǒ yào diǎn yì wǎn niúròumiàn.", trans: "I want to order a bowl of beef noodles.", tag: "Lesson07" },
-      { id: "L07_02", hanzi: "唱歌", pinyin: "chànggē", meaning: "to sing songs", sentence: "他們很喜歡唱韓文歌。", sentencePinyin: "tāmen hěn xǐhuān chàng Hánwén gē.", trans: "They really like singing Korean songs.", tag: "Lesson07" },
-      { id: "L07_03", hanzi: "見面", pinyin: "jiànmiàn", meaning: "to meet each other", sentence: "我今天跟朋友見面。", sentencePinyin: "wǒ jīntiān gēn péngyǒu jiànmiàn.", trans: "I am meeting my friend today.", tag: "Lesson07" },
-      { id: "L07_04", hanzi: "從...到...", pinyin: "cóng... dào...", meaning: "from ... to ...", sentence: "我從板橋坐捷運到內湖工作。", sentencePinyin: "wǒ cóng Bǎnqiáo zuò jiéyùn dào Nèihú gōngzuò.", trans: "I take the MRT from Banqiao to Neihu for work.", tag: "Lesson07" },
-      { id: "L07_05", hanzi: "時候", pinyin: "shíhòu", meaning: "time / when", sentence: "上班的時候不可以用手機。", sentencePinyin: "shàngbān de shíhòu bù kěyǐ yòng shǒujī.", trans: "You cannot use mobile phones while working.", tag: "Lesson07" },
-      { id: "L08_01", hanzi: "高鐵", pinyin: "gāotiě", meaning: "High Speed Rail (THSR)", sentence: "坐高鐵又快又舒服，可是有一點貴。", sentencePinyin: "zuò gāotiě yòu kuài yòu shūfú, kěshì yǒuyìdiǎn guì.", trans: "Taking the High Speed Rail is both fast and comfortable, but a bit expensive.", tag: "Lesson08" },
-      { id: "L08_02", hanzi: "捷運", pinyin: "jiéyùn", meaning: "mass rapid transit (MRT)", sentence: "坐捷運比較舒服。", sentencePinyin: "zuò jiéyùn bǐjiào shūfú.", trans: "Taking the MRT is more comfortable.", tag: "Lesson08" },
-      { id: "L08_03", hanzi: "但是", pinyin: "dànshì", meaning: "but / however", sentence: "公司的同事很好，但是老闆不好。", sentencePinyin: "gōngsī de tóngshì hěn hǎo, dànshì lǎobǎn bù hǎo.", trans: "The company's colleagues are great, but the boss is not.", tag: "Lesson08" },
-      { id: "L08_04", hanzi: "又...又...", pinyin: "yòu... yòu...", meaning: "both ... and ...", sentence: "這家餐廳的菜又便宜又好吃。", sentencePinyin: "zhè jiā cāntīng de cài yòu piányí yòu hǎochī.", trans: "This restaurant's food is both cheap and delicious.", tag: "Lesson08" },
-      { id: "L08_05", hanzi: "舒服", pinyin: "shūfú", meaning: "comfortable", sentence: "坐高鐵很舒服。", sentencePinyin: "zuò gāotiě hěn shūfú.", trans: "Taking the High Speed Rail is very comfortable.", tag: "Lesson08" },
-      { id: "L08_06", hanzi: "站", pinyin: "zhàn", meaning: "station / stop", sentence: "請問捷運站在哪裡？", sentencePinyin: "qǐngwèn jiéyùn zhàn zài nǎlǐ?", trans: "Excuse me, where is the MRT station?", tag: "Lesson08" },
-      { id: "L08_07", hanzi: "或是", pinyin: "huòshì", meaning: "or (in statements)", sentence: "你可以坐火車或是坐客運。", sentencePinyin: "nǐ kěyǐ zuò huǒchē huòshì zuò kèyùn.", trans: "You can take the train or take the intercity bus.", tag: "Lesson08" },
-      { id: "L08_08", hanzi: "比較", pinyin: "bǐjiào", meaning: "comparatively / relatively", sentence: "台灣的夏天比較熱。", sentencePinyin: "Táiwān de xiàtiān bǐjiào rè.", trans: "Taiwan's summer is hotter.", tag: "Lesson08" },
-      { id: "L09_01", hanzi: "要是...就...", pinyin: "yàoshì... jiù...", meaning: "if ... then ...", sentence: "要是我有空，我就跟你去貓空喝茶。", sentencePinyin: "yàoshì wǒ yǒukòng, wǒ jiù gēn nǐ qù Máokōng hē chá.", trans: "If I have free time, then I will go with you to Maokong to drink tea.", tag: "Lesson09" },
-      { id: "L09_02", hanzi: "逛", pinyin: "guàng", meaning: "to stroll / roam", sentence: "這週末我們打算去逛夜市。", sentencePinyin: "zhè zhōumò wǒmen dǎsuàn qù guàng yèshì.", trans: "This weekend we plan to stroll around the night market.", tag: "Lesson09" },
-      { id: "L09_03", hanzi: "特別", pinyin: "tèbié", meaning: "special / especially", sentence: "這個蛋糕的味道很特別。", sentencePinyin: "zhège dàngāo de wèidào hěn tèbié.", trans: "This cake's flavor is very special.", tag: "Lesson09" },
-      { id: "L09_04", hanzi: "茶館", pinyin: "cháguǎn", meaning: "teahouse", sentence: "貓空有很多漂亮的茶館。", sentencePinyin: "Máokōng yǒu hěn duō piàoliang de cháguǎn.", trans: "Maokong has many beautiful teahouses.", tag: "Lesson09" },
-      { id: "L09_05", hanzi: "決定", pinyin: "juédìng", meaning: "to decide / decision", sentence: "我們決定下個月去歐洲旅行。", sentencePinyin: "wǒmen juédìng xià gè yuè qù Ōuzhōu lǚxíng.", trans: "We decided to travel to Europe next month.", tag: "Lesson09" },
-      { id: "L09_06", hanzi: "有時候", pinyin: "yǒushíhòu", meaning: "sometimes", sentence: "週末我有時候去爬山，有時候跟朋友打籃球。", sentencePinyin: "zhōumò wǒ yǒushíhòu qù páshān, yǒushíhòu gēn péngyǒu dǎ lánqiú.", trans: "On weekends, sometimes I hike, sometimes I play basketball with friends.", tag: "Lesson09" },
-      { id: "L10_01", hanzi: "水果", pinyin: "shuǐguǒ", meaning: "fruit", sentence: "這是我買的水果。", sentencePinyin: "zhè shì wǒ mǎi de shuǐguǒ.", trans: "This is the fruit I bought.", tag: "Lesson10" },
-      { id: "L10_02", hanzi: "芒果", pinyin: "mángguǒ", meaning: "mango", sentence: "朋友給我一顆芒果。", sentencePinyin: "péngyǒu gěi wǒ yì kē mángguǒ.", trans: "A friend gave me a mango.", tag: "Lesson10" },
-      { id: "L10_03", hanzi: "香蕉", pinyin: "xiāngjiāo", meaning: "banana", sentence: "台灣的香蕉很甜很香。", sentencePinyin: "Táiwān de xiāngjiāo hěn tián hěn xiāng.", trans: "Taiwanese bananas are very sweet and fragrant.", tag: "Lesson10" },
-      { id: "L10_04", hanzi: "機會", pinyin: "jīhuì", meaning: "chance / opportunity", sentence: "要是以後有機會，我想去歐洲旅行。", sentencePinyin: "yàoshì yǐhòu yǒu jīhuì, wǒ xiǎng qù Ōuzhōu lǚxíng.", trans: "If there is an opportunity in the future, I want to travel to Europe.", tag: "Lesson10" },
-      { id: "L10_05", hanzi: "乾淨", pinyin: "gānjìng", meaning: "clean", sentence: "他每天打掃，所以他的家很乾淨。", sentencePinyin: "tā měitiān dǎsǎo, suǒyǐ tā de jiā hěn gānjìng.", trans: "He cleans every day, so his home is very clean.", tag: "Lesson10" },
-      { id: "L11_01", hanzi: "租", pinyin: "zū", meaning: "to rent", sentence: "他在台北租了一間房間。", sentencePinyin: "tā zài Táiběi zū le yì jiān fángjiān.", trans: "He rented a room in Taipei.", tag: "Lesson11" },
-      { id: "L11_02", hanzi: "房東", pinyin: "fángdōng", meaning: "landlord", sentence: "我每個月給房東房租。", sentencePinyin: "wǒ měi gè yuè gěi fángdōng fángzū.", trans: "I pay rent to the landlord every month.", tag: "Lesson11" },
-      { id: "L11_03", hanzi: "超市", pinyin: "chāoshì", meaning: "supermarket", sentence: "從我家走路到超市只要3分鐘。", sentencePinyin: "cóng wǒ jiā zǒulù dào chāoshì zhǐ yào sān fēnzhōng.", trans: "Walking from my home to the supermarket takes only 3 minutes.", tag: "Lesson11" },
-      { id: "L11_04", hanzi: "習慣", pinyin: "xíguàn", meaning: "habit / accustomed to", sentence: "我已經習慣每天7點起床。", sentencePinyin: "wǒ yǐjīng xíguàn měitiān qī diǎn qǐchuáng.", trans: "I am already accustomed to getting up at 7 o'clock every day.", tag: "Lesson11" }
+      // Lesson 02
+      { id: "L02_001", hanzi: "的", pinyin: "de", meaning: "possessive/modifying particle", sentence: "我的芒果很好吃。", sentencePinyin: "Wǒ de mángguǒ hěn hǎochī.", trans: "My mango is delicious.", tag: "Lesson02" },
+      { id: "L02_002", hanzi: "家人", pinyin: "jiārén", meaning: "family members", sentence: "我的家人都住在台灣。", sentencePinyin: "Wǒ de jiārén dōu zhù zài Táiwān.", trans: "My family all live in Taiwan.", tag: "Lesson02" },
+      { id: "L02_003", hanzi: "家", pinyin: "jiā", meaning: "home / house / family", sentence: "我的家在那裡。", sentencePinyin: "Wǒ de jiā zài nàlǐ.", trans: "My home is over there.", tag: "Lesson02" },
+      { id: "L02_004", hanzi: "漂亮", pinyin: "piàoliang", meaning: "pretty / beautiful", sentence: "這房子不漂亮。", sentencePinyin: "Zhè fángzi bú piàoliang.", trans: "This house is not pretty.", tag: "Lesson02" },
+      { id: "L02_005", hanzi: "房子", pinyin: "fángzi", meaning: "house / building", sentence: "他們的房子很大。", sentencePinyin: "Tāmen de fángzi hěn dà.", trans: "Their house is very big.", tag: "Lesson02" },
+      { id: "L02_006", hanzi: "坐", pinyin: "zuò", meaning: "to sit / to take (transport)", sentence: "我們坐捷運去台北101。", sentencePinyin: "Wǒmen zuò jiéyùn qù Táiběi 101.", trans: "We take the MRT to Taipei 101.", tag: "Lesson02" },
+      { id: "L02_007", hanzi: "幾", pinyin: "jǐ", meaning: "how many / how much", sentence: "你家有幾個人？", sentencePinyin: "Nǐ jiā yǒu jǐ ge rén?", trans: "How many people are there in your family?", tag: "Lesson02" },
+      { id: "L02_008", hanzi: "個", pinyin: "ge / gè", meaning: "general measure word", sentence: "你有幾個學生？", sentencePinyin: "Nǐ yǒu jǐ ge xuéshēng?", trans: "How many students do you have?", tag: "Lesson02" },
+      { id: "L02_009", hanzi: "沒", pinyin: "méi", meaning: "not / have not", sentence: "我沒有哥哥。", sentencePinyin: "Wǒ méiyǒu gēge.", trans: "I don't have an older brother.", tag: "Lesson02" },
+      { id: "L02_010", hanzi: "寫字", pinyin: "xiězì", meaning: "to write characters", sentence: "我寫中文字。", sentencePinyin: "Wǒ xiě zhōngwén zì.", trans: "I write Chinese characters.", tag: "Lesson02" },
+      { id: "L02_011", hanzi: "兄弟", pinyin: "xiōngdì", meaning: "brothers", sentence: "我有兩個兄弟。", sentencePinyin: "Wǒ yǒu liǎng ge xiōngdì.", trans: "I have two brothers.", tag: "Lesson02" },
+      { id: "L02_012", hanzi: "姊妹", pinyin: "jiěmèi", meaning: "sisters", sentence: "你有姊妹嗎？", sentencePinyin: "Nǐ yǒu jiěmèi ma?", trans: "Do you have sisters?", tag: "Lesson02" },
+      { id: "L02_013", hanzi: "五", pinyin: "wǔ", meaning: "five", sentence: "我家有五個人。", sentencePinyin: "Wǒ jiā yǒu wǔ ge rén.", trans: "There are five people in my family.", tag: "Lesson02" },
+      { id: "L02_014", hanzi: "兩", pinyin: "liǎng", meaning: "two (quantity)", sentence: "我有兩本書。", sentencePinyin: "Wǒ yǒu liǎng běn shū.", trans: "I have two books.", tag: "Lesson02" },
+
+      // Lesson 06
+      { id: "L06_001", hanzi: "他們", pinyin: "tāmen", meaning: "they / them", sentence: "他們去大學學中文。", sentencePinyin: "Tāmen qù dàxué xué zhōngwén.", trans: "They go to the university to learn Chinese.", tag: "Lesson06" },
+      { id: "L06_002", hanzi: "學校", pinyin: "xuéxiào", meaning: "school", sentence: "你家附近有沒有學校？", sentencePinyin: "Nǐ jiā fùjìn yǒu méiyǒu xuéxiào?", trans: "Is there a school near your home?", tag: "Lesson06" },
+      { id: "L06_003", hanzi: "同學", pinyin: "tóngxué", meaning: "classmate", sentence: "他是我的中文課同學。", sentencePinyin: "Tā shì wǒ de zhōngwén kè tóngxué.", trans: "He is my Chinese class classmate.", tag: "Lesson06" },
+      { id: "L06_004", hanzi: "學生", pinyin: "xuéshēng", meaning: "student", sentence: "學生們在教室裡面。", sentencePinyin: "Xuéshēngmen zài jiàoshì lǐmiàn.", trans: "The students are inside the classroom.", tag: "Lesson06" },
+      { id: "L06_005", hanzi: "在", pinyin: "zài", meaning: "at / in / on", sentence: "我在台灣工作。", sentencePinyin: "Wǒ zài Táiwān gōngzuò.", trans: "I work in Taiwan.", tag: "Lesson06" },
+      { id: "L06_006", hanzi: "山上", pinyin: "shānshàng", meaning: "on the mountain", sentence: "在台灣爬山很有趣。", sentencePinyin: "Zài Táiwān páshān hěn yǒuqù.", trans: "Hiking in Taiwan is very interesting.", tag: "Lesson06" },
+      { id: "L06_007", hanzi: "哪裡", pinyin: "nǎlǐ", meaning: "where", sentence: "你知道我的手機在哪裡嗎？", sentencePinyin: "Nǐ zhīdào wǒ de shǒujī zài nǎlǐ ma?", trans: "Do you know where my cell phone is?", tag: "Lesson06" },
+      { id: "L06_008", hanzi: "遠", pinyin: "yuǎn", meaning: "far", sentence: "我家離公司很遠。", sentencePinyin: "Wǒ jiā lí gōngsī hěn yuǎn.", trans: "My home is far from the company.", tag: "Lesson06" },
+      { id: "L06_009", hanzi: "近", pinyin: "jìn", meaning: "near / close", sentence: "我家離捷運站很近。", sentencePinyin: "Wǒ jiā lí jiéyùn zhàn hěn jìn.", trans: "My home is very close to the MRT station.", tag: "Lesson06" },
+      { id: "L06_010", hanzi: "那裡", pinyin: "nàlǐ", meaning: "there", sentence: "我的車子停在那裡。", sentencePinyin: "Wǒ de chēzi tíng zài nàlǐ.", trans: "My car is parked over there.", tag: "Lesson06" },
+      { id: "L06_011", hanzi: "這裡", pinyin: "zhèlǐ", meaning: "here", sentence: "這裡可以拍照嗎？", sentencePinyin: "Zhèlǐ kěyǐ pāizhào ma?", trans: "Can we take photos here?", tag: "Lesson06" },
+      { id: "L06_012", hanzi: "風景", pinyin: "fēngjǐng", meaning: "scenery / landscape", sentence: "宜蘭山上的風景很漂亮。", sentencePinyin: "Yílán shānshàng de fēngjǐng hěn piàoliang.", trans: "The scenery on the mountain in Yilan is very beautiful.", tag: "Lesson06" },
+      { id: "L06_013", hanzi: "美", pinyin: "měi", meaning: "beautiful / pretty", sentence: "台南的風景也很美。", sentencePinyin: "Táinán de fēngjǐng yě hěn měi.", trans: "Tainan's scenery is also very beautiful.", tag: "Lesson06" },
+      { id: "L06_014", hanzi: "前面", pinyin: "qiánmiàn", meaning: "front / in front of", sentence: "車子在我的前面。", sentencePinyin: "Chēzi zài wǒ de qiánmiàn.", trans: "The car is in front of me.", tag: "Lesson06" },
+      { id: "L06_015", hanzi: "後面", pinyin: "hòumiàn", meaning: "back / behind", sentence: "捷運站在我家後面。", sentencePinyin: "Jiéyùn zhàn zài wǒ jiā hòumiàn.", trans: "The MRT station is behind my home.", tag: "Lesson06" },
+      { id: "L06_016", hanzi: "海", pinyin: "hǎi", meaning: "sea / ocean", sentence: "我去宜蘭衝浪看海。", sentencePinyin: "Wǒ qù Yílán chōnglàng kàn hǎi.", trans: "I go to Yilan to surf and see the ocean.", tag: "Lesson06" },
+      { id: "L06_017", hanzi: "山", pinyin: "shān", meaning: "mountain", sentence: "台灣地震很多，所以山很多。", sentencePinyin: "Táiwān dìzhèn hěnduō, suǒyǐ shān hěnduō.", trans: "Taiwan has many earthquakes, so it has many mountains.", tag: "Lesson06" },
+      { id: "L06_018", hanzi: "真的", pinyin: "zhēnde", meaning: "real / really", sentence: "這是真的新聞。", sentencePinyin: "Zhè shì zhēnde xīnwén.", trans: "This is real news.", tag: "Lesson06" },
+      { id: "L06_019", hanzi: "地方", pinyin: "dìfāng", meaning: "place / location", sentence: "我覺得花蓮是很漂亮的地方。", sentencePinyin: "Wǒ juéde Huālián shì hěn piàoliang de dìfāng.", trans: "I think Hualien is a very beautiful place.", tag: "Lesson06" },
+      { id: "L06_020", hanzi: "現在", pinyin: "xiànzài", meaning: "now", sentence: "我們現在在上課。", sentencePinyin: "Wǒmen xiànzài zài shàngkè.", trans: "We are having class right now.", tag: "Lesson06" },
+      { id: "L06_021", hanzi: "附近", pinyin: "fùjìn", meaning: "nearby / vicinity", sentence: "我家附近有很多便利商店。", sentencePinyin: "Wǒ jiā fùjìn yǒu hěnduō biànlì shāngdiàn.", trans: "There are many convenience stores near my house.", tag: "Lesson06" },
+      { id: "L06_022", hanzi: "樓下", pinyin: "lóuxià", meaning: "downstairs", sentence: "我現在要去樓下買晚餐。", sentencePinyin: "Wǒ xiànzài yào qù lóuxià mǎi wǎncān.", trans: "I am going downstairs now to buy dinner.", tag: "Lesson06" },
+      { id: "L06_023", hanzi: "樓上", pinyin: "lóushàng", meaning: "upstairs", sentence: "我的朋友住在樓上。", sentencePinyin: "Wǒ de péngyǒu zhù zài lóushàng.", trans: "My friend lives upstairs.", tag: "Lesson06" },
+      { id: "L06_024", hanzi: "找", pinyin: "zhǎo", meaning: "to look for / to visit (someone)", sentence: "我想去台南找我的朋友。", sentencePinyin: "Wǒ xiǎng qù Táinán zhǎo wǒ de péngyǒu.", trans: "I want to go to Tainan to visit my friend.", tag: "Lesson06" },
+      { id: "L06_025", hanzi: "朋友", pinyin: "péngyǒu", meaning: "friend", sentence: "我常常跟朋友見面。", sentencePinyin: "Wǒ chángcháng gēn péngyǒu jiànmiàn.", trans: "I often meet up with friends.", tag: "Lesson06" },
+      { id: "L06_026", hanzi: "上課", pinyin: "shàngkè", meaning: "to attend class / class begins", sentence: "不好意思，我今天晚上有事，所以不能上課。", sentencePinyin: "Bù hǎoyìsi, wǒ jīntiān wǎnshàng yǒushì, suǒyǐ bùnéng shàngkè.", trans: "Excuse me, I am busy tonight, so I cannot attend class.", tag: "Lesson06" },
+      { id: "L06_027", hanzi: "花蓮", pinyin: "Huālián", meaning: "Hualien (county in Taiwan)", sentence: "我從宜蘭騎摩托車到花蓮。", sentencePinyin: "Wǒ cóng Yílán qí mótuōchē dào Huālián.", trans: "I rode a scooter from Yilan to Hualien.", tag: "Lesson06" },
+      { id: "L06_028", hanzi: "聽說", pinyin: "tīngshuō", meaning: "to hear of / I heard that", sentence: "我聽說義大利的菜都很好吃。", sentencePinyin: "Wǒ tīngshuō Yìdàlì de cài dōu hěn hǎochī.", trans: "I heard that Italian food is all delicious.", tag: "Lesson06" },
+      { id: "L06_029", hanzi: "方便", pinyin: "fāngbiàn", meaning: "convenient", sentence: "台北有捷運、公車很多很方便。", sentencePinyin: "Táiběi yǒu jiéyùn, gōngchē hěnduō hěn fāngbiàn.", trans: "Taipei has MRT and many buses, very convenient.", tag: "Lesson06" },
+      { id: "L06_030", hanzi: "東西", pinyin: "dōngxī", meaning: "thing / object / stuff", sentence: "這個東西多少錢？", sentencePinyin: "Zhè ge dōngxī duōshǎo qián?", trans: "How much is this item?", tag: "Lesson06" },
+      { id: "L06_031", hanzi: "方向", pinyin: "fāngxiàng", meaning: "direction", sentence: "你的家是哪個方向？", sentencePinyin: "Nǐ de jiā shì nǎge fāngxiàng?", trans: "Which direction is your home?", tag: "Lesson06" },
+      { id: "L06_032", hanzi: "外面", pinyin: "wàimiàn", meaning: "outside", sentence: "外面現在在下雨。", sentencePinyin: "Wàimiàn xiànzài zài xiàyǔ.", trans: "It is raining outside right now.", tag: "Lesson06" },
+      { id: "L06_033", hanzi: "裡面", pinyin: "lǐmiàn", meaning: "inside", sentence: "包包裡面是空的。", sentencePinyin: "Bāobāo lǐmiàn shì kōng de.", trans: "The inside of the bag is empty.", tag: "Lesson06" },
+      { id: "L06_034", hanzi: "商店", pinyin: "shāngdiàn", meaning: "store / shop", sentence: "捷運站附近有很多商店。", sentencePinyin: "Jiéyùn zhàn fùjìn yǒu hěnduō shāngdiàn.", trans: "There are many shops near the MRT station.", tag: "Lesson06" },
+      { id: "L06_035", hanzi: "吃飯", pinyin: "chīfàn", meaning: "to have a meal / to eat rice", sentence: "你喜歡吃義大利燉飯還是紫米飯？", sentencePinyin: "Nǐ xǐhuān chī Yìdàlì dùnfàn háishì zǐmǐfàn?", trans: "Do you like eating risotto or purple rice?", tag: "Lesson06" },
+      { id: "L06_036", hanzi: "宿舍", pinyin: "sùshè", meaning: "dormitory", sentence: "學生宿舍在大學裡面。", sentencePinyin: "Xuéshēng sùshè zài dàxué lǐmiàn.", trans: "The student dormitory is inside the university.", tag: "Lesson06" },
+      { id: "L06_037", hanzi: "樓", pinyin: "lóu", meaning: "floor / storey", sentence: "我們的教室在這棟大樓的2樓。", sentencePinyin: "Wǒmen de jiàoshì zài zhè dòng dàlóu de èr lóu.", trans: "Our classroom is on the 2nd floor of this building.", tag: "Lesson06" },
+      { id: "L06_038", hanzi: "棟", pinyin: "dòng", meaning: "measure word for buildings", sentence: "我公司附近有很多棟大樓。", sentencePinyin: "Wǒ gōngsī fùjìn yǒu hěnduō dòng dàlóu.", trans: "There are many tall buildings near my company.", tag: "Lesson06" },
+      { id: "L06_039", hanzi: "大樓", pinyin: "dàlóu", meaning: "tall building / multi-storey building", sentence: "那棟大樓非常高。", sentencePinyin: "Nà dòng dàlóu fēicháng gāo.", trans: "That building is very tall.", tag: "Lesson06" },
+      { id: "L06_040", hanzi: "圖書館", pinyin: "túshūguǎn", meaning: "library", sentence: "你大學的時候常常去圖書館嗎？", sentencePinyin: "Nǐ dàxué de shíhòu chángcháng qù túshūguǎn ma?", trans: "Did you often go to the library when you were in college?", tag: "Lesson06" },
+      { id: "L06_041", hanzi: "旁邊", pinyin: "pángbiān", meaning: "beside / next to", sentence: "我家旁邊有商店。", sentencePinyin: "Wǒ jiā pángbiān yǒu shāngdiàn.", trans: "There are shops next to my home.", tag: "Lesson06" },
+      { id: "L06_042", hanzi: "教室", pinyin: "jiàoshì", meaning: "classroom", sentence: "學生們在教室裡面看書。", sentencePinyin: "Xuéshēngmen zài jiàoshì lǐmiàn kàn shū.", trans: "The students are reading inside the classroom.", tag: "Lesson06" },
+      { id: "L06_043", hanzi: "游泳池", pinyin: "yóuyǒngchí", meaning: "swimming pool", sentence: "外國年輕人喜歡去游泳池游泳。", sentencePinyin: "Wàiguó niánqīngrén xǐhuān qù yóuyǒngchí yóuyǒng.", trans: "Young foreign people like going to the swimming pool to swim.", tag: "Lesson06" },
+
+      // Lesson 07
+      { id: "L07_001", hanzi: "點", pinyin: "diǎn", meaning: "o'clock / to order (food)", sentence: "我要點一碗牛肉麵。", sentencePinyin: "Wǒ yào diǎn yì wǎn niúròumiàn.", trans: "I want to order a bowl of beef noodles.", tag: "Lesson07" },
+      { id: "L07_002", hanzi: "KTV", pinyin: "K-T-V", meaning: "karaoke box", sentence: "你去過台灣的KTV嗎？", sentencePinyin: "Nǐ qùguò Táiwān de KTV ma?", trans: "Have you been to a KTV in Taiwan?", tag: "Lesson07" },
+      { id: "L07_003", hanzi: "唱歌", pinyin: "chànggē", meaning: "to sing songs", sentence: "他們很喜歡唱韓文歌。", sentencePinyin: "Tāmen hěn xǐhuān chàng Hánwéngē.", trans: "They really like singing Korean songs.", tag: "Lesson07" },
+      { id: "L07_004", hanzi: "分", pinyin: "fēn", meaning: "minute (time mark)", sentence: "現在是9點48分。", sentencePinyin: "Xiànzài shì jiǔ diǎn sìshíbā fēn.", trans: "Right now it is 9:48.", tag: "Lesson07" },
+      { id: "L07_005", hanzi: "見面", pinyin: "jiànmiàn", meaning: "to meet / to see each other", sentence: "我今天跟朋友見面。", sentencePinyin: "Wǒ jīntiān gēn péngyǒu jiànmiàn.", trans: "I am meeting my friend today.", tag: "Lesson07" },
+      { id: "L07_006", hanzi: "從...到...", pinyin: "cóng... dào...", meaning: "from ... to ...", sentence: "我從板橋坐捷運到內湖工作。", sentencePinyin: "Wǒ cóng Bǎnqiáo zuò jiéyùn dào Nèihú gōngzuò.", trans: "I take the MRT from Banqiao to Neihu for work.", tag: "Lesson07" },
+      { id: "L07_007", hanzi: "中午", pinyin: "zhōngwǔ", meaning: "noon", sentence: "我們公司中午休息一個小時。", sentencePinyin: "Wǒmen gōngsī zhōngwǔ xiūxí yí gè xiǎoshí.", trans: "Our company takes a one-hour lunch break at noon.", tag: "Lesson07" },
+      { id: "L07_008", hanzi: "晚上", pinyin: "wǎnshàng", meaning: "evening / night", sentence: "我今天晚上有事。", sentencePinyin: "Wǒ jīntiān wǎnshàng yǒushì.", trans: "I have plans tonight.", tag: "Lesson07" },
+      { id: "L07_009", hanzi: "得", pinyin: "děi", meaning: "must / have to", sentence: "你得去韓國旅行。", sentencePinyin: "Nǐ děi qù Hánguó lǚxíng.", trans: "You must travel to South Korea.", tag: "Lesson07" },
+      { id: "L07_010", hanzi: "銀行", pinyin: "yínháng", meaning: "bank", sentence: "這家銀行幾點開始營業？", sentencePinyin: "Zhè jiā yínháng jǐ diǎn kāishǐ yíngyè?", trans: "What time does this bank open for business?", tag: "Lesson07" },
+      { id: "L07_011", hanzi: "時候", pinyin: "shíhòu", meaning: "time / when", sentence: "上班的時候不可以用手機。", sentencePinyin: "Shàngbān de shíhòu bù kěyǐ yòng shǒujī.", trans: "You cannot use mobile phones while working.", tag: "Lesson07" },
+      { id: "L07_012", hanzi: "後天", pinyin: "hòutiān", meaning: "day after tomorrow", sentence: "後天是星期四。", sentencePinyin: "Hòutiān shì xīngqísì.", trans: "The day after tomorrow is Thursday.", tag: "Lesson07" },
+      { id: "L07_013", hanzi: "大安森林公園", pinyin: "Dà'ān Sēnlíngōngyuán", meaning: "Daan Forest Park", sentence: "大安森林公園的風景很漂亮。", sentencePinyin: "Dà'ān Sēnlíngōngyuán de fēngjǐng hěn piàoliang.", trans: "Daan Forest Park's scenery is very pretty.", tag: "Lesson07" },
+      { id: "L07_014", hanzi: "下次", pinyin: "xiàcì", meaning: "next time", sentence: "我最近常常說下次。", sentencePinyin: "Wǒ zuìjìn chángcháng shuō xiàcì.", trans: "Lately I often say 'next time'.", tag: "Lesson07" },
+      { id: "L07_015", hanzi: "沒問題", pinyin: "méi wèntí", meaning: "no problem", sentence: "明天見面沒問題。", sentencePinyin: "Míngtiān jiànmiàn méi wèntí.", trans: "Meeting tomorrow is no problem.", tag: "Lesson07" },
+      { id: "L07_016", hanzi: "對了", pinyin: "duìle", meaning: "by the way", sentence: "對了，你幾點會到？", sentencePinyin: "Duìle, nǐ jǐ diǎn huì dào?", trans: "By the way, what time will you arrive?", tag: "Lesson07" },
+      { id: "L07_017", hanzi: "有空", pinyin: "yǒukòng", meaning: "to have free time", sentence: "如果你有空，我們就去買東西。", sentencePinyin: "Rúguǒ nǐ yǒukòng, wǒmen jiù qù mǎi dōngxi.", trans: "If you have free time, then we will go shopping.", tag: "Lesson07" },
+      { id: "L07_018", hanzi: "再見", pinyin: "zàijiàn", meaning: "goodbye", sentence: "中文課結束了，老師再見！", sentencePinyin: "Zhōngwén kè jiéshù le, lǎoshī zàijiàn!", trans: "Chinese class is over, goodbye teacher!", tag: "Lesson07" },
+      { id: "L07_019", hanzi: "午餐", pinyin: "wǔcān", meaning: "lunch", sentence: "我們中午一起吃午餐吧。", sentencePinyin: "Wǒmen zhōngwǔ yìqǐ chī wǔcān ba.", trans: "Let's eat lunch together at noon.", tag: "Lesson07" },
+      { id: "L07_020", hanzi: "剛", pinyin: "gāng", meaning: "just / just now", sentence: "我剛下班，現在要去搭捷運。", sentencePinyin: "Wǒ gāng xiàbān, xiànzài yào qù dā jiéyùn.", trans: "I just got off work and am going to take the MRT now.", tag: "Lesson07" },
+      { id: "L07_021", hanzi: "寫", pinyin: "xiě", meaning: "to write", sentence: "你會寫中文字嗎？", sentencePinyin: "Nǐ huì xiě zhōngwén zì ma?", trans: "Can you write Chinese characters?", tag: "Lesson07" },
+      { id: "L07_022", hanzi: "可以", pinyin: "kěyǐ", meaning: "can / may / be permitted", sentence: "這裡可以拍照嗎？", sentencePinyin: "Zhèlǐ kěyǐ pāizhào ma?", trans: "May we take pictures here?", tag: "Lesson07" },
+      { id: "L07_023", hanzi: "問", pinyin: "wèn", meaning: "to ask", sentence: "我常常問店員可不可以用信用卡付錢。", sentencePinyin: "Wǒ chángcháng wèn diànyuán kě bù kěyǐ yòng xìnyòngkǎ fù qián.", trans: "I often ask store clerks if I can pay by credit card.", tag: "Lesson07" },
+      { id: "L07_024", hanzi: "等一下", pinyin: "děng yíxià", meaning: "wait a moment / later", sentence: "等一下下課，我跟朋友要去看足球比賽。", sentencePinyin: "Děng yíxià xiàkè, wǒ gēn péngyǒu yào qù kàn zúqiú bǐsài.", trans: "After class later, my friend and I will go watch a football match.", tag: "Lesson07" },
+      { id: "L07_025", hanzi: "有事", pinyin: "yǒushì", meaning: "busy / occupied / have matters", sentence: "不好意思，我今天晚上有事。", sentencePinyin: "Bù hǎoyìsi, wǒ jīntiān wǎnshàng yǒushì.", trans: "Excuse me, I have something to attend to tonight.", tag: "Lesson07" },
+      { id: "L07_026", hanzi: "有意思", pinyin: "yǒuyìsi", meaning: "interesting / meaningful", sentence: "這個故事很有意思。", sentencePinyin: "Zhè ge gùshì hěn yǒuyìsi.", trans: "This story is very interesting.", tag: "Lesson07" },
+      { id: "L07_027", hanzi: "結束", pinyin: "jiéshù", meaning: "to finish / to end", sentence: "足球比賽結束了。", sentencePinyin: "Zúqiú bǐsài jiéshù le.", trans: "The football match has ended.", tag: "Lesson07" },
+      { id: "L07_028", hanzi: "最近", pinyin: "zuìjìn", meaning: "lately / recently", sentence: "最近天氣真的太熱了。", sentencePinyin: "Zuìjìn tiānqì zhēnde tài rè le.", trans: "Lately the weather is really too hot.", tag: "Lesson07" },
+      { id: "L07_029", hanzi: "忙", pinyin: "máng", meaning: "busy", sentence: "最近因為工作，所以很忙。", sentencePinyin: "Zuìjìn yīnwèi gōngzuò, suǒyǐ hěn máng.", trans: "Lately because of work, I am very busy.", tag: "Lesson07" },
+      { id: "L07_030", hanzi: "每...都...", pinyin: "měi... dōu...", meaning: "every ... all ...", sentence: "每天捷運都很多人。", sentencePinyin: "Měitiān jiéyùn dōu hěnduō rén.", trans: "Every day the MRT is crowded with people.", tag: "Lesson07" },
+      { id: "L07_031", hanzi: "天", pinyin: "tiān", meaning: "day", sentence: "他打算去歐洲旅行10天。", sentencePinyin: "Tā dǎsuàn qù Ōuzhōu lǚxíng shí tiān.", trans: "He plans to travel in Europe for 10 days.", tag: "Lesson07" },
+      { id: "L07_032", hanzi: "書法", pinyin: "shūfǎ", meaning: "calligraphy", sentence: "你的女朋友會寫書法。", sentencePinyin: "Nǐ de nǚpéngyǒu huì xiě shūfǎ.", trans: "Your girlfriend knows how to write calligraphy.", tag: "Lesson07" },
+      { id: "L07_033", hanzi: "課", pinyin: "kè", meaning: "class / lesson / course", sentence: "我最喜歡歷史課。", sentencePinyin: "Wǒ zuì xǐhuān lìshǐ kè.", trans: "I like history class the most.", tag: "Lesson07" },
+      { id: "L07_034", hanzi: "開始", pinyin: "kāishǐ", meaning: "to start / to begin", sentence: "派對開始了！", sentencePinyin: "Pàiduì kāishǐ le!", trans: "The party has started!", tag: "Lesson07" },
+      { id: "L07_035", hanzi: "字", pinyin: "zì", meaning: "character / word", sentence: "中文字很難寫。", sentencePinyin: "Zhōngwén zì hěn nán xiě.", trans: "Chinese characters are difficult to write.", tag: "Lesson07" },
+
+      // Lesson 08
+      { id: "L08_001", hanzi: "坐火車", pinyin: "zuò huǒchē", meaning: "to take a train", sentence: "我從板橋坐火車到宜蘭。", sentencePinyin: "Wǒ cóng Bǎnqiáo zuò huǒchē dào Yílán.", trans: "I took a train from Banqiao to Yilan.", tag: "Lesson08" },
+      { id: "L08_002", hanzi: "高鐵", pinyin: "gāotiě", meaning: "Taiwan High Speed Rail (THSR)", sentence: "坐高鐵又快又舒服，可是有一點貴。", sentencePinyin: "Zuò gāotiě yòu kuài yòu shūfú, kěshì yǒu yìdiǎn guì.", trans: "Taking the High Speed Rail is both fast and comfortable, but a bit expensive.", tag: "Lesson08" },
+      { id: "L08_003", hanzi: "捷運", pinyin: "jiéyùn", meaning: "mass rapid transit (MRT)", sentence: "坐捷運比較舒服。", sentencePinyin: "Zuò jiéyùn bǐjiào shūfú.", trans: "Taking the MRT is more comfortable.", tag: "Lesson08" },
+      { id: "L08_004", hanzi: "公車", pinyin: "gōngchē", meaning: "city bus", sentence: "公車比較慢，高鐵比較快。", sentencePinyin: "Gōngchē bǐjiào màn, gāotiě bǐjiào kuài.", trans: "The bus is slower; the High Speed Rail is faster.", tag: "Lesson08" },
+      { id: "L08_005", hanzi: "計程車", pinyin: "jìchéngchē", meaning: "taxi", sentence: "計程車比較快。", sentencePinyin: "Jìchéngchē bǐjiào kuài.", trans: "Taking a taxi is faster.", tag: "Lesson08" },
+      { id: "L08_006", hanzi: "開車", pinyin: "kāichē", meaning: "to drive a car", sentence: "你開車很慢嗎？", sentencePinyin: "Nǐ kāichē hěn màn ma?", trans: "Do you drive slowly?", tag: "Lesson08" },
+      { id: "L08_007", hanzi: "機車", pinyin: "jīchē", meaning: "scooter / motorcycle", sentence: "我有機車和汽車駕照。", sentencePinyin: "Wǒ yǒu jīchē hé qìchē jiàzhào.", trans: "I have both scooter and car driver's licenses.", tag: "Lesson08" },
+      { id: "L08_008", hanzi: "腳踏車", pinyin: "jiǎotàchē", meaning: "bicycle", sentence: "在台北騎腳踏車很方便。", sentencePinyin: "Zài Táiběi qí jiǎotàchē hěn fāngbiàn.", trans: "Riding a bicycle in Taipei is very convenient.", tag: "Lesson08" },
+      { id: "L08_009", hanzi: "跟", pinyin: "gēn", meaning: "with / and", sentence: "我跟女友一起去宜蘭。", sentencePinyin: "Wǒ gēn nǚyǒu yìqǐ qù Yílán.", trans: "I go to Yilan together with my girlfriend.", tag: "Lesson08" },
+      { id: "L08_010", hanzi: "玩", pinyin: "wán", meaning: "to play / to have fun", sentence: "這個週末我們打算出去玩。", sentencePinyin: "Zhè ge zhōumò wǒmen dǎsuàn chūqù wán.", trans: "This weekend we plan to go out and have fun.", tag: "Lesson08" },
+      { id: "L08_011", hanzi: "怎麼", pinyin: "zěnme", meaning: "how / why", sentence: "義大利麵怎麼做？", sentencePinyin: "Yìdàlìmiàn zěnme zuò?", trans: "How do you make pasta?", tag: "Lesson08" },
+      { id: "L08_012", hanzi: "慢", pinyin: "màn", meaning: "slow", sentence: "請你說慢一點。", sentencePinyin: "Qǐng nǐ shuō màn yìdiǎn.", trans: "Please speak a bit slower.", tag: "Lesson08" },
+      { id: "L08_013", hanzi: "鐘頭", pinyin: "zhōngtóu", meaning: "hour", sentence: "午休一個鐘頭。", sentencePinyin: "Wǔxiū yí gè zhōngtóu.", trans: "Lunch break is one hour.", tag: "Lesson08" },
+      { id: "L08_014", hanzi: "比較", pinyin: "bǐjiào", meaning: "comparatively / relatively", sentence: "台灣的夏天比較熱。", sentencePinyin: "Táiwān de xiàtiān bǐjiào rè.", trans: "Taiwan's summer is hotter.", tag: "Lesson08" },
+      { id: "L08_015", hanzi: "快", pinyin: "kuài", meaning: "fast / quick", sentence: "他騎摩托車很快。", sentencePinyin: "Tā qí mótuōchē hěn kuài.", trans: "He rides his scooter very fast.", tag: "Lesson08" },
+      { id: "L08_016", hanzi: "車票", pinyin: "chēpiào", meaning: "transport ticket", sentence: "我要買一張去台南的車票。", sentencePinyin: "Wǒ yào mǎi yì zhāng qù Táinán de chēpiào.", trans: "I want to buy a ticket to Tainan.", tag: "Lesson08" },
+      { id: "L08_017", hanzi: "非常", pinyin: "fēicháng", meaning: "extremely / very", sentence: "你的中文非常好。", sentencePinyin: "Nǐ de zhōngwén fēicháng hǎo.", trans: "Your Chinese is extremely good.", tag: "Lesson08" },
+      { id: "L08_018", hanzi: "比", pinyin: "bǐ", meaning: "compared to / comparison marker", sentence: "今天不比昨天熱。", sentencePinyin: "Jīntiān bù bǐ zuótiān rè.", trans: "Today is not hotter than yesterday.", tag: "Lesson08" },
+      { id: "L08_019", hanzi: "故宮博物院", pinyin: "Gùgōng Bówùyuàn", meaning: "National Palace Museum", sentence: "故宮博物院有很多歷史文化展覽。", sentencePinyin: "Gùgōng Bówùyuàn yǒu hěnduō lìshǐ wénhuà zhǎnlǎn.", trans: "The National Palace Museum has many historical exhibitions.", tag: "Lesson08" },
+      { id: "L08_020", hanzi: "不行", pinyin: "bùxíng", meaning: "not allowed / won't do", sentence: "這裡不能抽菸，不行！", sentencePinyin: "Zhèlǐ bùnéng chōuyān, bùxíng!", trans: "Smoking is not permitted here; it is not allowed!", tag: "Lesson08" },
+      { id: "L08_021", hanzi: "差不多", pinyin: "chàbùduō", meaning: "almost / about the same", sentence: "哥哥跟弟弟差不多高。", sentencePinyin: "Gēge gēn dìdi chàbùduō gāo.", trans: "Older brother and younger brother are almost the same height.", tag: "Lesson08" },
+      { id: "L08_022", hanzi: "但是", pinyin: "dànshì", meaning: "but / however", sentence: "公司的同事很好，但是老闆不好。", sentencePinyin: "Gōngsī de tóngshì hěn hǎo, dànshì lǎobǎn bù hǎo.", trans: "The company's colleagues are great, but the boss is not.", tag: "Lesson08" },
+      { id: "L08_023", hanzi: "又...又...", pinyin: "yòu... yòu...", meaning: "both ... and ...", sentence: "這家餐廳的菜又便宜又好吃。", sentencePinyin: "Zhè jiā cāntīng de cài yòu piányí yòu hǎochī.", trans: "This restaurant's food is both cheap and delicious.", tag: "Lesson08" },
+      { id: "L08_024", hanzi: "舒服", pinyin: "shūfú", meaning: "comfortable", sentence: "坐高鐵很舒服。", sentencePinyin: "Zuò gāotiě hěn shūfú.", trans: "Taking the High Speed Rail is very comfortable.", tag: "Lesson08" },
+      { id: "L08_025", hanzi: "站", pinyin: "zhàn", meaning: "station / stop", sentence: "請問捷運站在哪裡？", sentencePinyin: "Qǐngwèn jiéyùn zhàn zài nǎlǐ?", trans: "Excuse me, where is the MRT station?", tag: "Lesson08" },
+      { id: "L08_026", hanzi: "或是", pinyin: "huòshì", meaning: "or (in statements)", sentence: "你可以坐火車或是坐客運。", sentencePinyin: "Nǐ kěyǐ zuò huǒchē huòshì zuò kèyùn.", trans: "You can take the train or take the intercity bus.", tag: "Lesson08" },
+      { id: "L08_027", hanzi: "臺南", pinyin: "Táinán", meaning: "Tainan (city in southern Taiwan)", sentence: "我覺得台南很好玩。", sentencePinyin: "Wǒ juéde Táinán hěn hǎowán.", trans: "I think Tainan is a lot of fun.", tag: "Lesson08" },
+
+      // Lesson 09
+      { id: "L09_001", hanzi: "星期", pinyin: "xīngqí", meaning: "week / day of the week", sentence: "這星期我要去台北101。", sentencePinyin: "Zhè xīngqí wǒ yào qù Táiběi 101.", trans: "This week I want to go to Taipei 101.", tag: "Lesson09" },
+      { id: "L09_002", hanzi: "回國", pinyin: "huíguó", meaning: "to return to one's home country", sentence: "暑假很多學生要回國。", sentencePinyin: "Shǔjià hěnduō xuéshēng yào huíguó.", trans: "During summer break, many students return home.", tag: "Lesson09" },
+      { id: "L09_003", hanzi: "打算", pinyin: "dǎsuàn", meaning: "to plan / to intend", sentence: "我打算下個月去泰國旅行。", sentencePinyin: "Wǒ dǎsuàn xià gè yuè qù Tàiguó lǚxíng.", trans: "I plan to travel to Thailand next month.", tag: "Lesson09" },
+      { id: "L09_004", hanzi: "電視", pinyin: "diànshì", meaning: "television", sentence: "他們現在在看電視。", sentencePinyin: "Tāmen xiànzài zài kàn diànshì.", trans: "They are watching television right now.", tag: "Lesson09" },
+      { id: "L09_005", hanzi: "影片", pinyin: "yǐngpiàn", meaning: "video / film", sentence: "他很喜歡看YouTube的影片。", sentencePinyin: "Tā hěn xǐhuān kàn YouTube de yǐngpiàn.", trans: "He really likes watching YouTube videos.", tag: "Lesson09" },
+      { id: "L09_006", hanzi: "旅行", pinyin: "lǚxíng", meaning: "to travel / journey", sentence: "要是下個月不忙，我想去歐洲旅行。", sentencePinyin: "Yàoshì xià gè yuè bù máng, wǒ xiǎng qù Ōuzhōu lǚxíng.", trans: "If I am not busy next month, I want to travel to Europe.", tag: "Lesson09" },
+      { id: "L09_007", hanzi: "功課", pinyin: "gōngkè", meaning: "homework / coursework", sentence: "他已經寫完功課了。", sentencePinyin: "Tā yǐjīng xiěwán gōngkè le.", trans: "He has already finished his homework.", tag: "Lesson09" },
+      { id: "L09_008", hanzi: "出去", pinyin: "chūqù", meaning: "to go out", sentence: "我現在要出去買晚餐。", sentencePinyin: "Wǒ xiànzài yào chūqù mǎi wǎncān.", trans: "I am going out now to buy dinner.", tag: "Lesson09" },
+      { id: "L09_009", hanzi: "大概", pinyin: "dàgài", meaning: "probably / approximately", sentence: "你今天幾點下班？大概五點下班。", sentencePinyin: "Nǐ jīntiān jǐ diǎn xiàbān? Dàgài wǔ diǎn xiàbān.", trans: "What time do you finish work today? Probably around 5.", tag: "Lesson09" },
+      { id: "L09_010", hanzi: "放假", pinyin: "fàngjià", meaning: "to have a holiday / vacation", sentence: "從明天開始放假放3天。", sentencePinyin: "Cóng míngtiān kāishǐ fàngjià fàng sān tiān.", trans: "Starting tomorrow, we have 3 days of holiday.", tag: "Lesson09" },
+      { id: "L09_011", hanzi: "下個星期", pinyin: "xià gè xīngqí", meaning: "next week", sentence: "下個星期放假，你有什麼計畫嗎？", sentencePinyin: "Xià gè xīngqí fàngjià, nǐ yǒu shénme jìhuà ma?", trans: "Next week is a holiday; do you have any plans?", tag: "Lesson09" },
+      { id: "L09_012", hanzi: "有時候", pinyin: "yǒushíhòu", meaning: "sometimes", sentence: "週末我有時候去爬山，有時候跟朋友打籃球。", sentencePinyin: "Zhōumò wǒ yǒushíhòu qù páshān, yǒushíhòu gēn péngyǒu dǎ lánqiú.", trans: "On weekends, sometimes I hike, sometimes play basketball.", tag: "Lesson09" },
+      { id: "L09_013", hanzi: "多久", pinyin: "duōjiǔ", meaning: "how long (duration)", sentence: "你住在台灣多久了？", sentencePinyin: "Nǐ zhù zài Táiwān duōjiǔ le?", trans: "How long have you been living in Taiwan?", tag: "Lesson09" },
+      { id: "L09_014", hanzi: "臺東", pinyin: "Táidōng", meaning: "Taitung (county in eastern Taiwan)", sentence: "台東的風景非常漂亮。", sentencePinyin: "Táidōng de fēngjǐng fēicháng piàoliang.", trans: "Taitung's scenery is extremely beautiful.", tag: "Lesson09" },
+      { id: "L09_015", hanzi: "女", pinyin: "nǚ", meaning: "female", sentence: "吃飯的女人是我女朋友。", sentencePinyin: "Chīfàn de nǚrén shì wǒ nǚpéngyǒu.", trans: "The woman eating is my girlfriend.", tag: "Lesson09" },
+      { id: "L09_016", hanzi: "男", pinyin: "nán", meaning: "male", sentence: "穿黑色外套的人是我弟弟。", sentencePinyin: "Chuān hēisè wàitào de rén shì wǒ dìdi.", trans: "The person wearing a black jacket is my younger brother.", tag: "Lesson09" },
+      { id: "L09_017", hanzi: "月", pinyin: "yuè", meaning: "month / moon", sentence: "今天的月亮很漂亮。", sentencePinyin: "Jīntiān de yuèliàng hěn piàoliang.", trans: "Tonight's moon is very beautiful.", tag: "Lesson09" },
+      { id: "L09_018", hanzi: "號", pinyin: "hào", meaning: "date / number", sentence: "今天是七月七號。", sentencePinyin: "Jīntiān shì qī yuè qī hào.", trans: "Today is July 7th.", tag: "Lesson09" },
+      { id: "L09_019", hanzi: "帶", pinyin: "dài", meaning: "to bring / to carry", sentence: "明天會下雨，記得帶你的雨傘。", sentencePinyin: "Míngtiān huì xiàyǔ, jìdé dài nǐ de yǔsǎn.", trans: "It will rain tomorrow; remember to bring your umbrella.", tag: "Lesson09" },
+      { id: "L09_020", hanzi: "還", pinyin: "hái", meaning: "still / yet", sentence: "他很忙，到現在還沒吃飯。", sentencePinyin: "Tā hěn máng, dào xiànzài hái méi chīfàn.", trans: "He is very busy; up until now he still hasn't eaten.", tag: "Lesson09" },
+      { id: "L09_021", hanzi: "建議", pinyin: "jiànyì", meaning: "to suggest / suggestion", sentence: "現在天氣不好，我建議不要出門。", sentencePinyin: "Xiànzài tiānqì bù hǎo, wǒ jiànyì bú yào chūmén.", trans: "The weather is bad right now; I suggest not going out.", tag: "Lesson09" },
+      { id: "L09_022", hanzi: "夜市", pinyin: "yèshì", meaning: "night market", sentence: "這週末我們打算去逛夜市。", sentencePinyin: "Zhè zhōumò wǒmen dǎsuàn qù guàng yèshì.", trans: "This weekend we plan to stroll around the night market.", tag: "Lesson09" },
+      { id: "L09_023", hanzi: "應該", pinyin: "yīnggāi", meaning: "should / ought to", sentence: "天氣太熱了，你應該多喝水。", sentencePinyin: "Tiānqì tài rè le, nǐ yīnggāi duō hē shuǐ.", trans: "The weather is too hot; you should drink more water.", tag: "Lesson09" },
+      { id: "L09_024", hanzi: "逛", pinyin: "guàng", meaning: "to stroll / to roam", sentence: "今天放颱風假，不可以去逛百貨公司。", sentencePinyin: "Jīntiān fàng táifēngjià, bù kěyǐ qù guàng bǎihuò gōngsī.", trans: "Today is typhoon holiday; we cannot browse department stores.", tag: "Lesson09" },
+      { id: "L09_025", hanzi: "特別", pinyin: "tèbié", meaning: "special / especially", sentence: "這個蛋糕的味道很特別。", sentencePinyin: "Zhè ge dàngāo de wèidào hěn tèbié.", trans: "This cake's flavor is very special.", tag: "Lesson09" },
+      { id: "L09_026", hanzi: "茶館", pinyin: "cháguǎn", meaning: "teahouse", sentence: "貓空有很多漂亮的茶館。", sentencePinyin: "Máokōng yǒu hěnduō piàoliang de cháguǎn.", trans: "Maokong has many beautiful teahouses.", tag: "Lesson09" },
+      { id: "L09_027", hanzi: "茶葉", pinyin: "cháyè", meaning: "tea leaves", sentence: "爸爸喜歡泡台灣高山茶葉。", sentencePinyin: "Bàba xǐhuān pào Táiwān gāoshān cháyè.", trans: "Dad likes brewing Taiwanese high-mountain tea leaves.", tag: "Lesson09" },
+      { id: "L09_028", hanzi: "決定", pinyin: "juédìng", meaning: "to decide / decision", sentence: "我們決定下個月去歐洲旅行。", sentencePinyin: "Wǒmen juédìng xià gè yuè qù Ōuzhōu lǚxíng.", trans: "We decided to travel to Europe next month.", tag: "Lesson09" },
+      { id: "L09_029", hanzi: "要是...就...", pinyin: "yàoshì... jiù...", meaning: "if ... then ...", sentence: "要是我有空，我就跟你去貓空喝茶。", sentencePinyin: "Yàoshì wǒ yǒukòng, wǒ jiù gēn nǐ qù Máokōng hē chá.", trans: "If I have free time, then I will go with you to Maokong.", tag: "Lesson09" },
+      { id: "L09_030", hanzi: "早一點", pinyin: "zǎo yìdiǎn", meaning: "earlier", sentence: "我今天很忙，想早一點下課。", sentencePinyin: "Wǒ jīntiān hěn máng, xiǎng zǎo yìdiǎn xiàkè.", trans: "I am very busy today, so I want to finish class earlier.", tag: "Lesson09" },
+      { id: "L09_031", hanzi: "就", pinyin: "jiù", meaning: "then / right away", sentence: "如果你有空，我們就去買東西。", sentencePinyin: "Rúguǒ nǐ yǒukòng, wǒmen jiù qù mǎi dōngxi.", trans: "If you have free time, then we will go shopping.", tag: "Lesson09" },
+      { id: "L09_032", hanzi: "貓空", pinyin: "Máokōng", meaning: "Maokong (mountain tea area in Taipei)", sentence: "要是我不累，我就去貓空喝茶。", sentencePinyin: "Yàoshì wǒ bú lèi, wǒ jiù qù Máokōng hē chá.", trans: "If I am not tired, then I will go to Maokong to drink tea.", tag: "Lesson09" },
+
+      // Lesson 10
+      { id: "L10_001", hanzi: "水果", pinyin: "shuǐguǒ", meaning: "fruit", sentence: "這是我買的水果。", sentencePinyin: "Zhè shì wǒ mǎi de shuǐguǒ.", trans: "This is the fruit I bought.", tag: "Lesson10" },
+      { id: "L10_002", hanzi: "芒果", pinyin: "mángguǒ", meaning: "mango", sentence: "朋友給我一顆芒果。", sentencePinyin: "Péngyǒu gěi wǒ yì kē mángguǒ.", trans: "A friend gave me a mango.", tag: "Lesson10" },
+      { id: "L10_003", hanzi: "西瓜", pinyin: "xīguā", meaning: "watermelon", sentence: "夏天吃西瓜很舒服。", sentencePinyin: "Xiàtiān chī xīguā hěn shūfú.", trans: "Eating watermelon in summer is very refreshing.", tag: "Lesson10" },
+      { id: "L10_004", hanzi: "香蕉", pinyin: "xiāngjiāo", meaning: "banana", sentence: "台灣的香蕉很甜很香。", sentencePinyin: "Táiwān de xiāngjiāo hěn tián hěn xiāng.", trans: "Taiwanese bananas are very sweet and fragrant.", tag: "Lesson10" },
+      { id: "L10_005", hanzi: "榴槤", pinyin: "liúlián", meaning: "durian", sentence: "榴槤的味道非常特別。", sentencePinyin: "Liúlián de wèidào fēicháng tèbié.", trans: "The smell of durian is very distinctive.", tag: "Lesson10" },
+      { id: "L10_006", hanzi: "奇異果", pinyin: "qíyìguǒ", meaning: "kiwi fruit", sentence: "我早上喜歡吃奇異果。", sentencePinyin: "Wǒ zǎoshàng xǐhuān chī qíyìguǒ.", trans: "I like eating kiwi fruit in the morning.", tag: "Lesson10" },
+      { id: "L10_007", hanzi: "蘋果", pinyin: "píngguǒ", meaning: "apple", sentence: "每天吃一顆蘋果對身體很好。", sentencePinyin: "Měitiān chī yì kē píngguǒ duì shēntǐ hěn hǎo.", trans: "Eating an apple every day is good for health.", tag: "Lesson10" },
+      { id: "L10_008", hanzi: "水蜜桃", pinyin: "shuǐmìtáo", meaning: "peach", sentence: "拉拉山的水蜜桃很有名。", sentencePinyin: "Lālāshān de shuǐmìtáo hěn yǒumíng.", trans: "Lalashan peaches are very famous.", tag: "Lesson10" },
+      { id: "L10_009", hanzi: "草莓", pinyin: "cǎoméi", meaning: "strawberry", sentence: "冬天的時候很多人喜歡去採草莓。", sentencePinyin: "Dōngtiān de shíhòu hěnduō rén xǐhuān qù cǎi cǎoméi.", trans: "In winter, many people like going strawberry picking.", tag: "Lesson10" },
+      { id: "L10_010", hanzi: "黃色", pinyin: "huángsè", meaning: "yellow", sentence: "黃色的香蕉很好吃。", sentencePinyin: "Huángsè de xiāngjiāo hěn hǎochī.", trans: "Yellow bananas are delicious.", tag: "Lesson10" },
+      { id: "L10_011", hanzi: "顏色", pinyin: "yánsè", meaning: "color", sentence: "你喜歡什麼顏色？我比較喜歡綠色。", sentencePinyin: "Nǐ xǐhuān shénme yánsè? Wǒ bǐjiào xǐhuān lǜsè.", trans: "What color do you like? I prefer green.", tag: "Lesson10" },
+      { id: "L10_012", hanzi: "給", pinyin: "gěi", meaning: "to give", sentence: "她給我生日禮物。", sentencePinyin: "Tā gěi wǒ shēngrì lǐwù.", trans: "She gave me a birthday gift.", tag: "Lesson10" },
+      { id: "L10_013", hanzi: "塊", pinyin: "kuài", meaning: "chunk / piece / slice", sentence: "她給我一塊蛋糕。", sentencePinyin: "Tā gěi wǒ yí kuài dàngāo.", trans: "She gave me a slice of cake.", tag: "Lesson10" },
+      { id: "L10_014", hanzi: "香", pinyin: "xiāng", meaning: "fragrant / aromatic", sentence: "香蕉很香。", sentencePinyin: "Xiāngjiāo hěn xiāng.", trans: "Bananas are very fragrant.", tag: "Lesson10" },
+      { id: "L10_015", hanzi: "臭", pinyin: "chòu", meaning: "smelly / stinky", sentence: "老闆做的臭豆腐又不臭又不辣。", sentencePinyin: "Lǎobǎn zuò de chòudòufǔ yòu bú chòu yòu bú là.", trans: "The stinky tofu made by the boss is neither smelly nor spicy.", tag: "Lesson10" },
+      { id: "L10_016", hanzi: "機會", pinyin: "jīhuì", meaning: "chance / opportunity", sentence: "要是以後有機會，我想去歐洲旅行。", sentencePinyin: "Yàoshì yǐhòu yǒu jīhuì, wǒ xiǎng qù Ōuzhōu lǚxíng.", trans: "If there is an opportunity in the future, I want to travel to Europe.", tag: "Lesson10" },
+      { id: "L10_017", hanzi: "請", pinyin: "qǐng", meaning: "to invite / to treat", sentence: "今天我生日，我請大家吃飯。", sentencePinyin: "Jīntiān wǒ shēngrì, wǒ qǐng dàjiā chīfàn.", trans: "Today is my birthday; I treat everyone to dinner.", tag: "Lesson10" },
+      { id: "L10_018", hanzi: "吃吃看", pinyin: "chīchīkàn", meaning: "taste it / try eating it", sentence: "那家餐廳很好吃，你可以去吃吃看。", sentencePinyin: "Nà jiā cāntīng hěn hǎochī, nǐ kěyǐ qù chīchīkàn.", trans: "That restaurant is delicious; you can give it a try.", tag: "Lesson10" },
+      { id: "L10_019", hanzi: "拍", pinyin: "pāi", meaning: "to take (photos) / to shoot", sentence: "他很喜歡拍風景照片。", sentencePinyin: "Tā hěn xǐhuān pāi fēngjǐng zhàopiàn.", trans: "He likes taking landscape photos very much.", tag: "Lesson10" },
+      { id: "L10_020", hanzi: "笑", pinyin: "xiào", meaning: "to smile / to laugh", sentence: "他看這部電影一直笑。", sentencePinyin: "Tā kàn zhè bù diànyǐng yìzhí xiào.", trans: "He kept laughing while watching this movie.", tag: "Lesson10" },
+      { id: "L10_021", hanzi: "開心", pinyin: "kāixīn", meaning: "happy / delighted", sentence: "我很開心你來參加我的生日派對。", sentencePinyin: "Wǒ hěn kāixīn nǐ lái cānjiā wǒ de shēngrì pàiduì.", trans: "I am delighted that you came to my birthday party.", tag: "Lesson10" },
+      { id: "L10_022", hanzi: "穿", pinyin: "chuān", meaning: "to wear / to put on", sentence: "穿紅色衣服的人是我太太。", sentencePinyin: "Chuān hóngsè yīfú de rén shì wǒ tàitài.", trans: "The person wearing red clothes is my wife.", tag: "Lesson10" },
+      { id: "L10_023", hanzi: "衣服", pinyin: "yīfú", meaning: "clothes / clothing", sentence: "那件衣服很好看。", sentencePinyin: "Nà jiàn yīfú hěn hǎokàn.", trans: "That piece of clothing looks very nice.", tag: "Lesson10" },
+      { id: "L10_024", hanzi: "旅館", pinyin: "lǚguǎn", meaning: "hotel", sentence: "去旅行以前要先訂旅館。", sentencePinyin: "Qù lǚxíng yǐqián yào xiān dìng lǚguǎn.", trans: "Before traveling, one must book a hotel first.", tag: "Lesson10" },
+      { id: "L10_025", hanzi: "太太", pinyin: "tàitài", meaning: "wife", sentence: "穿紅色衣服的人是我太太。", sentencePinyin: "Chuān hóngsè yīfú de rén shì wǒ tàitài.", trans: "The person wearing red clothes is my wife.", tag: "Lesson10" },
+      { id: "L10_026", hanzi: "先生", pinyin: "xiānshēng", meaning: "husband / Mr.", sentence: "那位先生是我的中文老師。", sentencePinyin: "Nà wèi xiānshēng shì wǒ de zhōngwén lǎoshī.", trans: "That gentleman is my Chinese teacher.", tag: "Lesson10" },
+      { id: "L10_027", hanzi: "矮", pinyin: "ǎi", meaning: "short (stature)", sentence: "桌子很矮。", sentencePinyin: "Zhuōzi hěn ǎi.", trans: "The table is very low/short.", tag: "Lesson10" },
+      { id: "L10_028", hanzi: "短", pinyin: "duǎn", meaning: "short (length/time)", sentence: "這個筆很短。", sentencePinyin: "Zhè ge bǐ hěn duǎn.", trans: "This pen is very short.", tag: "Lesson10" },
+      { id: "L10_029", hanzi: "高", pinyin: "gāo", meaning: "tall / high", sentence: "你的腿很長，個子很高。", sentencePinyin: "Nǐ de tuǐ hěn cháng, gèzi hěn gāo.", trans: "Your legs are long and you are very tall.", tag: "Lesson10" },
+      { id: "L10_030", hanzi: "長", pinyin: "cháng", meaning: "long (length)", sentence: "台灣的工作時間比較長。", sentencePinyin: "Táiwān de gōngzuò shíjiān bǐjiào cháng.", trans: "Work hours in Taiwan are relatively long.", tag: "Lesson10" },
+      { id: "L10_031", hanzi: "弟弟", pinyin: "dìdi", meaning: "younger brother", sentence: "穿黑色外套的人是我弟弟。", sentencePinyin: "Chuān hēisè wàitào de rén shì wǒ dìdi.", trans: "The person wearing a black jacket is my younger brother.", tag: "Lesson10" },
+      { id: "L10_032", hanzi: "乾淨", pinyin: "gānjìng", meaning: "clean", sentence: "他每天打掃，所以他的家很乾淨。", sentencePinyin: "Tā měitiān dǎsǎo, suǒyǐ tā de jiā hěn gānjìng.", trans: "He cleans every day, so his home is very clean.", tag: "Lesson10" },
+      { id: "L10_033", hanzi: "髒", pinyin: "zāng", meaning: "dirty", sentence: "他一個月沒打掃，房間很髒。", sentencePinyin: "Tā yí gè yuè méi dǎsǎo, fángjiān hěn zāng.", trans: "He hasn't cleaned for a month; the room is very dirty.", tag: "Lesson10" },
+      { id: "L10_034", hanzi: "窗戶", pinyin: "chuānghù", meaning: "window", sentence: "在台灣有一些房子沒有窗戶。", sentencePinyin: "Zài Táiwān yǒu yìxiē fángzi méiyǒu chuānghù.", trans: "In Taiwan, some apartments don't have windows.", tag: "Lesson10" },
+      { id: "L10_035", hanzi: "往", pinyin: "wǎng", meaning: "towards / heading for", sentence: "請往前走，然後右轉。", sentencePinyin: "Qǐng wǎng qián zǒu, ránhòu yòu zhuǎn.", trans: "Please walk forward, then turn right.", tag: "Lesson10" },
+      { id: "L10_036", hanzi: "住", pinyin: "zhù", meaning: "to live / to reside", sentence: "我女友住在我家附近。", sentencePinyin: "Wǒ nǚyǒu zhù zài wǒ jiā fùjìn.", trans: "My girlfriend lives near my house.", tag: "Lesson10" },
+
+      // Lesson 11
+      { id: "L11_001", hanzi: "租", pinyin: "zū", meaning: "to rent", sentence: "他在台北租了一間房間。", sentencePinyin: "Tā zài Táiběi zū le yì jiān fángjiān.", trans: "He rented a room in Taipei.", tag: "Lesson11" },
+      { id: "L11_002", hanzi: "房東", pinyin: "fángdōng", meaning: "landlord", sentence: "我每個月給房東房租。", sentencePinyin: "Wǒ měi gè yuè gěi fángdōng fángzū.", trans: "I pay rent to the landlord every month.", tag: "Lesson11" },
+      { id: "L11_003", hanzi: "房客", pinyin: "fángkè", meaning: "tenant", sentence: "這間公寓的房客都很安靜。", sentencePinyin: "Zhè jiān gōngyù de fángkè dōu hěn ānjìng.", trans: "The tenants in this apartment are all very quiet.", tag: "Lesson11" },
+      { id: "L11_004", hanzi: "客廳", pinyin: "kètīng", meaning: "living room", sentence: "我們在客廳看電視。", sentencePinyin: "Wǒmen zài kètīng kàn diànshì.", trans: "We watch television in the living room.", tag: "Lesson11" },
+      { id: "L11_005", hanzi: "廚房", pinyin: "chúfáng", meaning: "kitchen", sentence: "我的房間有一個小廚房。", sentencePinyin: "Wǒ de fángjiān yǒu yí gè xiǎo chúfáng.", trans: "My room has a small kitchen.", tag: "Lesson11" },
+      { id: "L11_006", hanzi: "左邊", pinyin: "zuǒbiān", meaning: "left side", sentence: "我家左邊有超市。", sentencePinyin: "Wǒ jiā zuǒbiān yǒu chāoshì.", trans: "There is a supermarket to the left of my house.", tag: "Lesson11" },
+      { id: "L11_007", hanzi: "右邊", pinyin: "yòubiān", meaning: "right side", sentence: "便利商店在我家的右邊。", sentencePinyin: "Biànlì shāngdiàn zài wǒ jiā de yòubiān.", trans: "The convenience store is on the right side of my home.", tag: "Lesson11" },
+      { id: "L11_008", hanzi: "浴室", pinyin: "yùshì", meaning: "bathroom / shower room", sentence: "這間套房的浴室很乾淨。", sentencePinyin: "Zhè jiān tàofáng de yùshì hěn gānjìng.", trans: "The bathroom of this studio is very clean.", tag: "Lesson11" },
+      { id: "L11_009", hanzi: "超市", pinyin: "chāoshì", meaning: "supermarket", sentence: "從我家走路到超市只要3分鐘。", sentencePinyin: "Cóng wǒ jiā zǒulù dào chāoshì zhǐ yào sān fēnzhōng.", trans: "Walking from my home to the supermarket takes only 3 minutes.", tag: "Lesson11" },
+      { id: "L11_010", hanzi: "走路", pinyin: "zǒulù", meaning: "to walk", sentence: "我每天從我家走路到捷運站。", sentencePinyin: "Wǒ měitiān cóng wǒ jiā zǒulù dào jiéyùn zhàn.", trans: "I walk from my home to the MRT station every day.", tag: "Lesson11" },
+      { id: "L11_011", hanzi: "分鐘", pinyin: "fēnzhōng", meaning: "minute (duration)", sentence: "請等我五分鐘。", sentencePinyin: "Qǐng děng wǒ wǔ fēnzhōng.", trans: "Please wait for me for five minutes.", tag: "Lesson11" },
+      { id: "L11_012", hanzi: "電話", pinyin: "diànhuà", meaning: "telephone / phone call", sentence: "他打電話給我。", sentencePinyin: "Tā dǎ diànhuà gěi wǒ.", trans: "He made a phone call to me.", tag: "Lesson11" },
+      { id: "L11_013", hanzi: "打電話", pinyin: "dǎ diànhuà", meaning: "to make a phone call", sentence: "我等一下打電話給你。", sentencePinyin: "Wǒ děng yíxià dǎ diànhuà gěi nǐ.", trans: "I will give you a call later.", tag: "Lesson11" },
+      { id: "L11_014", hanzi: "房租", pinyin: "fángzū", meaning: "house rent", sentence: "台北的房租太貴了。", sentencePinyin: "Táiběi de fángzū tài guì le.", trans: "Rent in Taipei is too expensive.", tag: "Lesson11" },
+      { id: "L11_015", hanzi: "已經", pinyin: "yǐjīng", meaning: "already", sentence: "我已經吃晚餐了。", sentencePinyin: "Wǒ yǐjīng chī wǎncān le.", trans: "I have already eaten dinner.", tag: "Lesson11" },
+      { id: "L11_016", hanzi: "習慣", pinyin: "xíguàn", meaning: "habit / to be accustomed to", sentence: "我已經習慣每天7點起床。", sentencePinyin: "Wǒ yǐjīng xíguàn měitiān qī diǎn qǐchuáng.", trans: "I am already accustomed to getting up at 7 o'clock every day.", tag: "Lesson11" },
+      { id: "L11_017", hanzi: "問題", pinyin: "wèntí", meaning: "problem / question", sentence: "我有一個問題想問你。", sentencePinyin: "Wǒ yǒu yí gè wèntí xiǎng wèn nǐ.", trans: "I have a question I want to ask you.", tag: "Lesson11" },
+      { id: "L11_018", hanzi: "熱水器", pinyin: "rèshuǐqì", meaning: "water heater", sentence: "熱水器壞了，不能洗澡。", sentencePinyin: "Rèshuǐqì huài le, bùnéng xǐzǎo.", trans: "The water heater is broken; we cannot take a shower.", tag: "Lesson11" },
+      { id: "L11_019", hanzi: "套房", pinyin: "tàofáng", meaning: "studio apartment / suite", sentence: "我想在台北租一間套房。", sentencePinyin: "Wǒ xiǎng zài Táiběi zū yì jiān tàofáng.", trans: "I want to rent a studio apartment in Taipei.", tag: "Lesson11" },
+      { id: "L11_020", hanzi: "回去", pinyin: "huíqù", meaning: "to return / go back", sentence: "你計畫什麼時候回去法國？", sentencePinyin: "Nǐ jìhuà shénme shíhòu huíqù Fǎguó.", trans: "When do you plan to go back to France?", tag: "Lesson11" },
+      { id: "L11_021", hanzi: "想", pinyin: "xiǎng", meaning: "to think / to miss / to want", sentence: "我想買新手機。", sentencePinyin: "Wǒ xiǎng mǎi xīn shǒujī.", trans: "I want to buy a new mobile phone.", tag: "Lesson11" },
+      { id: "L11_022", hanzi: "再", pinyin: "zài", meaning: "again / then (afterwards)", sentence: "你先洗手再吃晚餐。", sentencePinyin: "Nǐ xiān xǐshǒu zài chī wǎncān.", trans: "You wash hands first, then eat dinner.", tag: "Lesson11" },
+      { id: "L11_023", hanzi: "到", pinyin: "dào", meaning: "to arrive / reach", sentence: "從這裡走路十分鐘就到了。", sentencePinyin: "Cóng zhèlǐ zǒulù shí fēnzhōng jiù dào le.", trans: "Walking from here takes only ten minutes to arrive.", tag: "Lesson11" },
+      { id: "L11_024", hanzi: "間", pinyin: "jiān", meaning: "measure word for rooms/stores", sentence: "我家附近有一間義大利餐廳。", sentencePinyin: "Wǒ jiā fùjìn yǒu yì jiān Yìdàlì cāntīng.", trans: "There is an Italian restaurant near my home.", tag: "Lesson11" }
     ];
 
     // State Variables
@@ -559,8 +746,15 @@
     let isFlipped = false;
     let masteredIds = new Set();
     let showPinyin = false; // Disabled by default
+    let stagedExtractedCards = [];
+    let selectedPdfFile = null;
     const STORAGE_KEY = 'mandarin_studio_deck_data_v3';
     const API_KEY_STORAGE = 'mandarin_studio_user_gemini_key';
+
+    // Configure PDF.js worker
+    if (window.pdfjsLib) {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    }
 
     // DOM Elements Cache
     const el = {
@@ -609,13 +803,24 @@
       toastMsg: document.getElementById('toast-msg'),
       dropZone: document.getElementById('drop-zone'),
       pdfFileInput: document.getElementById('pdf-file-input'),
-      selectedFileName: document.getElementById('selected-file-name'),
+      selectedFileBadge: document.getElementById('selected-file-badge'),
+      selectedFileNameText: document.getElementById('selected-file-name-text'),
+      importerStatusBanner: document.getElementById('importer-status-banner'),
       inputLessonTag: document.getElementById('input-lesson-tag'),
       btnExtractPdf: document.getElementById('btn-extract-pdf'),
       extractionPreviewContainer: document.getElementById('extraction-preview-container'),
+      extractionPreviewTitle: document.getElementById('extraction-preview-title'),
       extractedCardsList: document.getElementById('extracted-cards-list'),
       btnConfirmAddExtracted: document.getElementById('btn-confirm-add-extracted'),
       btnExportBackup: document.getElementById('btn-export-backup'),
+      restoreFileInput: document.getElementById('restore-file-input'),
+      modeBtnPdf: document.getElementById('mode-btn-pdf'),
+      modeBtnManual: document.getElementById('mode-btn-manual'),
+      sectionPdfUpload: document.getElementById('section-pdf-upload'),
+      sectionManualPaste: document.getElementById('section-manual-paste'),
+      manualPasteInput: document.getElementById('manual-paste-input'),
+      inputManualTag: document.getElementById('input-manual-tag'),
+      btnAddManual: document.getElementById('btn-add-manual'),
       settingsModal: document.getElementById('settings-modal'),
       btnOpenSettings: document.getElementById('btn-open-settings'),
       btnCloseSettings: document.getElementById('btn-close-settings'),
@@ -623,11 +828,11 @@
       inputStandaloneApiKey: document.getElementById('input-standalone-api-key')
     };
 
-    function loadSavedData() {
+    function loadSavedState() {
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          const parsed = JSON.parse(saved);
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
           if (Array.isArray(parsed.deck) && parsed.deck.length > 0) {
             currentDeck = parsed.deck.filter(c => c.hanzi !== '張怡君' && c.hanzi !== '馬安同');
           }
@@ -637,12 +842,9 @@
           if (typeof parsed.studyIndex === 'number') {
             currentStudyIndex = parsed.studyIndex;
           }
-          if (parsed.lessonFilter && el.studyLessonFilter) {
-            el.studyLessonFilter.value = parsed.lessonFilter;
-          }
         }
       } catch (e) {
-        console.warn("Could not read localStorage", e);
+        console.warn("Could not read local storage", e);
       }
     }
 
@@ -652,88 +854,140 @@
           deck: currentDeck,
           masteredIds: Array.from(masteredIds),
           studyIndex: currentStudyIndex,
-          lessonFilter: el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL',
           updatedAt: Date.now()
         }));
       } catch (e) {
-        console.warn("Could not save to localStorage", e);
+        console.warn("Failed to write to local storage", e);
       }
       updateCountsAndFilters();
     }
 
-    // Helper: Generate Ruby typography for Hanzi characters
-    function createRubyHtml(hanzi, pinyin) {
-      if (!pinyin) return hanzi;
-      const cleanHanzi = hanzi.replace(/[，。？！、\s]/g, '');
-      const syllables = pinyin.trim().split(/\s+/);
-      
-      if (cleanHanzi.length === syllables.length && cleanHanzi.length > 0) {
-        return cleanHanzi.split('').map((char, i) => `<ruby>${char}<rt>${syllables[i] || ''}</rt></ruby>`).join('');
+    function buildRubyMarkup(hanzi, pinyin) {
+      if (!hanzi) return '';
+      const chars = Array.from(hanzi);
+      const syllables = (pinyin || '').trim().split(/\s+/);
+
+      if (chars.length === syllables.length && syllables.length > 0) {
+        return chars.map((char, i) => `<ruby>${char}<rt>${syllables[i]}</rt></ruby>`).join('');
+      }
+      // Single character or non-matching syllable count fallback
+      if (chars.length === 1 && syllables.length >= 1) {
+        return `<ruby>${chars[0]}<rt>${pinyin}</rt></ruby>`;
       }
       return `<ruby>${hanzi}<rt>${pinyin}</rt></ruby>`;
     }
 
+    function updatePinyinUI() {
+      if (showPinyin) {
+        document.body.classList.remove('pinyin-hidden');
+        el.pinyinBtnText.textContent = "Pinyin: ON";
+        el.btnTogglePinyin.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        el.btnTogglePinyin.classList.remove('text-slate-400');
+        if (el.btnFrontTogglePinyin) {
+          el.btnFrontTogglePinyin.classList.add('bg-cyan-500/20', 'text-cyan-300');
+          el.btnFrontTogglePinyin.classList.remove('text-slate-400');
+        }
+      } else {
+        document.body.classList.add('pinyin-hidden');
+        el.pinyinBtnText.textContent = "Pinyin: OFF";
+        el.btnTogglePinyin.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+        el.btnTogglePinyin.classList.add('text-slate-400');
+        if (el.btnFrontTogglePinyin) {
+          el.btnFrontTogglePinyin.classList.remove('bg-cyan-500/20', 'text-cyan-300');
+          el.btnFrontTogglePinyin.classList.add('text-slate-400');
+        }
+      }
+    }
+
+    function togglePinyin() {
+      showPinyin = !showPinyin;
+      updatePinyinUI();
+    }
+
+    function playTaiwaneseAudio(text) {
+      if (!('speechSynthesis' in window)) {
+        showToast("Audio synthesis not supported by this browser");
+        return;
+      }
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'zh-TW';
+      utterance.rate = 0.85;
+
+      const voices = window.speechSynthesis.getVoices();
+      const twVoice = voices.find(v => v.lang === 'zh-TW' || v.lang === 'zh_TW') ||
+                      voices.find(v => v.lang.startsWith('zh'));
+      if (twVoice) utterance.voice = twVoice;
+
+      window.speechSynthesis.speak(utterance);
+    }
+
     function resetStudyDeck(resetIndex = true) {
-      const filter = el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL';
-      if (filter === 'ALL') {
+      const selectedLesson = el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL';
+      if (selectedLesson === 'ALL') {
         studyDeck = [...currentDeck];
       } else {
-        studyDeck = currentDeck.filter(c => c.tag === filter);
+        studyDeck = currentDeck.filter(c => c.tag === selectedLesson);
       }
+
       if (resetIndex || currentStudyIndex >= studyDeck.length) {
         currentStudyIndex = 0;
       }
       renderCurrentCard();
-      updatePinyinUI();
     }
 
     function renderCurrentCard() {
-      if (!studyDeck.length) {
-        el.cardHanziFront.innerHTML = "No Cards";
-        el.cardMeaningBack.textContent = "No cards available";
-        el.cardIndexIndicator.textContent = "0 / 0";
+      if (!studyDeck || studyDeck.length === 0) {
+        el.cardHanziFront.textContent = "No cards";
+        el.cardPinyinSub.textContent = "";
+        el.cardSentenceFront.textContent = "Try changing the lesson filter or add new cards.";
+        el.cardSentencePinyinFront.textContent = "";
+        el.cardMeaningBack.textContent = "No cards in this deck";
+        el.cardIndexIndicator.textContent = "0 of 0";
         return;
       }
-
-      if (currentStudyIndex < 0) currentStudyIndex = 0;
-      if (currentStudyIndex >= studyDeck.length) currentStudyIndex = studyDeck.length - 1;
 
       const card = studyDeck[currentStudyIndex];
       const isMastered = masteredIds.has(card.id);
 
-      // Card Front
+      // Front Face
       el.cardTagFront.textContent = card.tag;
-      el.cardHanziFront.innerHTML = createRubyHtml(card.hanzi, card.pinyin);
+      el.cardHanziFront.innerHTML = buildRubyMarkup(card.hanzi, card.pinyin);
       el.cardPinyinSub.textContent = card.pinyin;
-      el.cardSentenceFront.innerHTML = createRubyHtml(card.sentence, card.sentencePinyin || '');
+      el.cardSentenceFront.textContent = card.sentence;
       el.cardSentencePinyinFront.textContent = card.sentencePinyin || '';
 
-      // Card Back
+      // Back Face
       el.cardTagBack.textContent = card.tag;
       el.cardMeaningBack.textContent = card.meaning;
       el.cardHanziBack.textContent = card.hanzi;
       el.cardPinyinBack.textContent = card.pinyin;
       el.cardSentenceBack.textContent = card.sentence;
       el.cardSentencePinyinBack.textContent = card.sentencePinyin || '';
-      el.cardTransBack.textContent = card.trans || '';
+      el.cardTransBack.textContent = card.trans || card.meaning;
 
-      // Mastered States
-      const starClass = isMastered ? "text-amber-400 fill-current" : "text-slate-400";
-      el.btnFrontMaster.innerHTML = `<i class="fa-solid fa-star ${starClass}"></i>`;
-      el.btnBackMaster.innerHTML = `<i class="fa-solid fa-star ${starClass}"></i>`;
-      el.masterBtnLabel.textContent = isMastered ? "Mastered ★" : "Mark Mastered";
+      // Master Icons
+      const masterIconClass = isMastered ? "fa-solid fa-star text-amber-400" : "fa-regular fa-star";
+      el.btnFrontMaster.innerHTML = `<i class="${masterIconClass}"></i>`;
+      el.btnBackMaster.innerHTML = `<i class="${masterIconClass}"></i>`;
+      el.btnMarkMaster.innerHTML = `<i class="${masterIconClass}"></i> <span>${isMastered ? 'Mastered' : 'Master'}</span>`;
 
-      el.cardIndexIndicator.textContent = `${currentStudyIndex + 1} / ${studyDeck.length}`;
-      el.masteredCounterBadge.textContent = `${masteredIds.size} Mastered`;
-
-      // Reset flip to front
-      if (isFlipped) {
-        el.flashcardInner.classList.remove('rotate-y-180');
-        isFlipped = false;
+      if (isMastered) {
+        el.btnMarkMaster.classList.add('border-amber-500/40', 'text-amber-400');
+      } else {
+        el.btnMarkMaster.classList.remove('border-amber-500/40', 'text-amber-400');
       }
+
+      // Indicators
+      el.cardIndexIndicator.textContent = `Card ${currentStudyIndex + 1} of ${studyDeck.length}`;
+      el.masteredCounterBadge.innerHTML = `<i class="fa-solid fa-circle-check mr-1"></i> ${masteredIds.size} Mastered`;
+
+      // Reset Flip to Front
+      isFlipped = false;
+      el.flashcardInner.classList.remove('rotate-y-180');
     }
 
-    function toggleFlip() {
+    function flipCard() {
       isFlipped = !isFlipped;
       if (isFlipped) {
         el.flashcardInner.classList.add('rotate-y-180');
@@ -743,145 +997,328 @@
     }
 
     function nextCard() {
-      if (currentStudyIndex < studyDeck.length - 1) {
-        currentStudyIndex++;
-        renderCurrentCard();
-        saveState();
-      } else {
-        showToast("Reached the end of the lesson!");
-      }
+      if (studyDeck.length === 0) return;
+      currentStudyIndex = (currentStudyIndex + 1) % studyDeck.length;
+      renderCurrentCard();
+      saveState();
     }
 
     function prevCard() {
-      if (currentStudyIndex > 0) {
-        currentStudyIndex--;
-        renderCurrentCard();
-        saveState();
-      }
+      if (studyDeck.length === 0) return;
+      currentStudyIndex = (currentStudyIndex - 1 + studyDeck.length) % studyDeck.length;
+      renderCurrentCard();
+      saveState();
     }
 
-    function toggleMasterCurrent() {
-      if (!studyDeck.length) return;
+    function toggleMasterCurrentCard() {
+      if (studyDeck.length === 0) return;
       const card = studyDeck[currentStudyIndex];
       if (masteredIds.has(card.id)) {
         masteredIds.delete(card.id);
         showToast("Marked for review");
       } else {
         masteredIds.add(card.id);
-        showToast("Mastered! ★");
+        showToast("Card mastered! 🎉");
       }
       renderCurrentCard();
       saveState();
     }
 
-    function togglePinyin() {
-      showPinyin = !showPinyin;
-      updatePinyinUI();
-    }
-
-    function updatePinyinUI() {
-      if (showPinyin) {
-        document.body.classList.remove('hide-pinyin');
-        el.pinyinBtnText.textContent = "Pinyin: ON";
-        el.btnTogglePinyin.className = "px-3 py-1.5 rounded-xl border border-cyan-400/50 bg-cyan-500/20 text-xs font-bold text-cyan-300 transition-all flex items-center gap-1.5 shadow-sm";
-      } else {
-        document.body.classList.add('hide-pinyin');
-        el.pinyinBtnText.textContent = "Pinyin: OFF";
-        el.btnTogglePinyin.className = "px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-400 transition-all flex items-center gap-1.5 shadow-sm";
+    function shuffleDeck() {
+      for (let i = studyDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [studyDeck[i], studyDeck[j]] = [studyDeck[j], studyDeck[i]];
       }
+      currentStudyIndex = 0;
+      renderCurrentCard();
+      showToast("Deck shuffled!");
     }
 
-    // Audio Playback with Web Speech API
-    function playAudio(text) {
-      if (!window.speechSynthesis) {
-        showToast("Speech synthesis not supported in this browser");
+    function renderVocabTable() {
+      const query = (el.searchInput.value || '').toLowerCase().trim();
+      const selectedLesson = el.tableLessonFilter.value;
+
+      const filtered = currentDeck.filter(c => {
+        const matchLesson = (selectedLesson === 'ALL' || c.tag === selectedLesson);
+        const matchQuery = !query ||
+          c.hanzi.toLowerCase().includes(query) ||
+          c.pinyin.toLowerCase().includes(query) ||
+          c.meaning.toLowerCase().includes(query) ||
+          c.sentence.toLowerCase().includes(query);
+        return matchLesson && matchQuery;
+      });
+
+      el.tableCardCount.textContent = `${filtered.length} words`;
+      el.vocabTableBody.innerHTML = '';
+
+      if (filtered.length === 0) {
+        el.vocabTableBody.innerHTML = `<tr><td colspan="7" class="text-center p-8 text-slate-500 font-semibold">No vocabulary matched your filter.</td></tr>`;
         return;
       }
-      window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'zh-TW';
-      utterance.rate = 0.88;
-      window.speechSynthesis.speak(utterance);
-    }
 
-    function updateCountsAndFilters() {
-      const tags = Array.from(new Set(currentDeck.map(c => c.tag))).sort();
-      
-      const currentStudyFilter = el.studyLessonFilter ? el.studyLessonFilter.value : 'ALL';
-      const currentTableFilter = el.tableLessonFilter ? el.tableLessonFilter.value : 'ALL';
-
-      if (el.studyLessonFilter) {
-        el.studyLessonFilter.innerHTML = `<option value="ALL">All Lessons (Master Deck)</option>` + 
-          tags.map(t => `<option value="${t}">${t}</option>`).join('');
-        el.studyLessonFilter.value = tags.includes(currentStudyFilter) ? currentStudyFilter : 'ALL';
-      }
-
-      if (el.tableLessonFilter) {
-        el.tableLessonFilter.innerHTML = `<option value="ALL">All Lessons</option>` + 
-          tags.map(t => `<option value="${t}">${t}</option>`).join('');
-        el.tableLessonFilter.value = tags.includes(currentTableFilter) ? currentTableFilter : 'ALL';
-      }
-
-      if (el.headerCardCount) el.headerCardCount.textContent = `${currentDeck.length} cards`;
-      if (el.tableCardCount) el.tableCardCount.textContent = `${currentDeck.length} entries`;
-      updateExportPreview();
-    }
-
-    function renderTable(data = currentDeck) {
-      if (!el.vocabTableBody) return;
-      el.vocabTableBody.innerHTML = data.map(card => `
-        <tr class="hover:bg-slate-800/40 transition-colors">
-          <td class="p-3 font-bold text-white">${card.hanzi}</td>
-          <td class="p-3 text-cyan-300 font-mono">${card.pinyin}</td>
-          <td class="p-3 text-slate-300">${card.meaning}</td>
-          <td class="p-3 hidden sm:table-cell text-slate-400">${card.sentence}</td>
+      filtered.forEach((card, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-colors border-b border-slate-800/60";
+        tr.innerHTML = `
+          <td class="p-3 text-center text-slate-500 font-mono">${idx + 1}</td>
+          <td class="p-3 font-hanzi font-bold text-sm text-white">${card.hanzi}</td>
+          <td class="p-3 text-cyan-300 font-semibold">${card.pinyin}</td>
+          <td class="p-3 text-slate-300 font-medium">${card.meaning}</td>
+          <td class="p-3 font-hanzi text-slate-400 max-w-xs truncate" title="${card.sentence}">${card.sentence}</td>
           <td class="p-3 text-center">
-            <button onclick="playAudio('${card.hanzi}')" class="p-1.5 hover:text-cyan-400 transition-colors">
-              <i class="fa-solid fa-volume-high"></i>
-            </button>
+            <span class="px-2 py-0.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-bold text-[10px]">${card.tag}</span>
           </td>
           <td class="p-3 text-center">
-            <button onclick="deleteCard('${card.id}')" class="p-1.5 text-slate-500 hover:text-red-400 transition-colors">
-              <i class="fa-solid fa-trash-can"></i>
-            </button>
+            <div class="flex items-center justify-center gap-2">
+              <button data-audio="${card.hanzi}" class="btn-row-audio w-7 h-7 rounded-lg bg-slate-800 hover:bg-cyan-500/20 text-cyan-400 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-volume-high text-[11px]"></i>
+              </button>
+              <button data-delete="${card.id}" class="btn-row-delete w-7 h-7 rounded-lg bg-slate-800 hover:bg-red-500/20 text-slate-400 hover:text-red-400 flex items-center justify-center transition-all">
+                <i class="fa-solid fa-trash-can text-[11px]"></i>
+              </button>
+            </div>
           </td>
-        </tr>
-      `).join('');
+        `;
+        el.vocabTableBody.appendChild(tr);
+      });
+
+      // Bind row listeners
+      el.vocabTableBody.querySelectorAll('.btn-row-audio').forEach(b => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          playTaiwaneseAudio(b.getAttribute('data-audio'));
+        });
+      });
+      el.vocabTableBody.querySelectorAll('.btn-row-delete').forEach(b => {
+        b.addEventListener('click', (e) => {
+          e.stopPropagation();
+          deleteCardById(b.getAttribute('data-delete'));
+        });
+      });
     }
 
-    window.deleteCard = function(id) {
+    function deleteCardById(id) {
       currentDeck = currentDeck.filter(c => c.id !== id);
       masteredIds.delete(id);
       saveState();
-      filterTable();
       resetStudyDeck(false);
+      renderVocabTable();
+      updateExportPreviews();
       showToast("Card deleted");
-    };
+    }
 
-    function filterTable() {
-      const q = el.searchInput ? el.searchInput.value.toLowerCase().trim() : '';
-      const filter = el.tableLessonFilter ? el.tableLessonFilter.value : 'ALL';
+    function updateCountsAndFilters() {
+      el.headerCardCount.textContent = `${currentDeck.length} cards`;
 
-      const filtered = currentDeck.filter(card => {
-        const matchesTag = filter === 'ALL' || card.tag === filter;
-        const matchesQuery = !q || card.hanzi.includes(q) || card.pinyin.toLowerCase().includes(q) || card.meaning.toLowerCase().includes(q);
-        return matchesTag && matchesQuery;
+      // Extract unique sorted lesson tags
+      const tags = Array.from(new Set(currentDeck.map(c => c.tag))).sort();
+      
+      const updateDropdown = (dropdown) => {
+        if (!dropdown) return;
+        const currentVal = dropdown.value;
+        dropdown.innerHTML = `<option value="ALL">All Lessons (${currentDeck.length})</option>`;
+        tags.forEach(t => {
+          const count = currentDeck.filter(c => c.tag === t).length;
+          dropdown.innerHTML += `<option value="${t}">${t} (${count})</option>`;
+        });
+        if (tags.includes(currentVal) || currentVal === 'ALL') {
+          dropdown.value = currentVal;
+        }
+      };
+
+      updateDropdown(el.studyLessonFilter);
+      updateDropdown(el.tableLessonFilter);
+    }
+
+    function setImporterStatus(msg, type = 'info') {
+      if (!el.importerStatusBanner) return;
+      el.importerStatusBanner.classList.remove('hidden', 'bg-red-500/10', 'text-red-400', 'border-red-500/30', 'bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30', 'bg-emerald-500/10', 'text-emerald-400', 'border-emerald-500/30');
+      
+      if (type === 'error') {
+        el.importerStatusBanner.classList.add('bg-red-500/10', 'text-red-400', 'border-red-500/30');
+        el.importerStatusBanner.innerHTML = `<span><i class="fa-solid fa-triangle-exclamation mr-1.5"></i> ${msg}</span>`;
+      } else if (type === 'success') {
+        el.importerStatusBanner.classList.add('bg-emerald-500/10', 'text-emerald-400', 'border-emerald-500/30');
+        el.importerStatusBanner.innerHTML = `<span><i class="fa-solid fa-circle-check mr-1.5"></i> ${msg}</span>`;
+      } else {
+        el.importerStatusBanner.classList.add('bg-cyan-500/10', 'text-cyan-400', 'border-cyan-500/30');
+        el.importerStatusBanner.innerHTML = `<span><i class="fa-solid fa-spinner fa-spin mr-1.5"></i> ${msg}</span>`;
+      }
+    }
+
+    function handlePdfSelection(file) {
+      if (!file) return;
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        setImporterStatus("Please choose a valid .pdf file", "error");
+        showToast("Please choose a valid PDF file");
+        return;
+      }
+      selectedPdfFile = file;
+      el.selectedFileNameText.textContent = `${file.name} (${Math.round(file.size / 1024)} KB)`;
+      el.selectedFileBadge.classList.remove('hidden');
+      setImporterStatus(`File ready: "${file.name}". Click 'Extract & Generate Flashcards'.`, 'success');
+    }
+
+    async function extractTextWithPdfJs(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await window.pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        const pageText = content.items.map(item => item.str).join(' ');
+        fullText += `\n--- Page ${i} ---\n` + pageText;
+      }
+      return fullText;
+    }
+
+    function parseVocabularyFromText(text, lessonTag) {
+      const cards = [];
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      
+      let currentCard = null;
+      const vocabRegex = /(?:(\d+)\s*[:：])?\s*([\u4e00-\u9fa5]{1,6})\s+([a-zA-Z\sāáǎàēéěèīíǐìōóǒòūúǔùǖǘǚǜ]+)\s*(.*)/;
+      const exRegex = /(?:Ex|ex)\s*[:：]\s*([\u4e00-\u9fa5，。？！、\s\w]+)/;
+
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const vMatch = line.match(vocabRegex);
+        if (vMatch && vMatch[2] && vMatch[2] !== 'Ex') {
+          const hanzi = vMatch[2].trim();
+          if (hanzi !== '張怡君' && hanzi !== '馬安同') {
+            if (currentCard) cards.push(currentCard);
+            currentCard = {
+              id: `${lessonTag}_pdf_${Date.now()}_${cards.length}`,
+              hanzi: hanzi,
+              pinyin: vMatch[3] ? vMatch[3].trim() : '',
+              meaning: vMatch[4] ? vMatch[4].trim() : hanzi,
+              sentence: `${hanzi}。`,
+              sentencePinyin: '',
+              trans: '',
+              tag: lessonTag
+            };
+          }
+          continue;
+        }
+
+        const exMatch = line.match(exRegex);
+        if (exMatch && currentCard) {
+          currentCard.sentence = exMatch[1].trim();
+        }
+      }
+
+      if (currentCard) cards.push(currentCard);
+      return cards;
+    }
+
+    async function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    async function callGeminiExtractPdf(base64Data, lessonTag, apiKey) {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const systemPrompt = `You are a Traditional Mandarin teacher in Taiwan specializing in the "Course in Contemporary Chinese" (當代中文課程).
+Extract all vocabulary words and example sentences from this lesson PDF. Exclude personal names (e.g., 張怡君, 馬安同).
+Return ONLY a valid JSON array of objects with these keys:
+[
+  {
+    "hanzi": "Traditional Chinese character(s)",
+    "pinyin": "accurate Pinyin with tonal marks",
+    "meaning": "English definition",
+    "sentence": "Traditional Chinese example sentence",
+    "sentencePinyin": "Pinyin with tonal marks for the sentence",
+    "trans": "English translation of the sentence",
+    "tag": "${lessonTag}"
+  }
+]`;
+
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: systemPrompt },
+              {
+                inlineData: {
+                  mimeType: "application/pdf",
+                  data: base64Data
+                }
+              }
+            ]
+          }]
+        })
       });
 
-      renderTable(filtered);
-      if (el.tableCardCount) el.tableCardCount.textContent = `${filtered.length} entries`;
+      if (!response.ok) throw new Error(`API error ${response.status}`);
+      const data = await response.json();
+      const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text || '[]';
+      const cleanJson = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const parsed = JSON.parse(cleanJson);
+      return parsed.map((item, idx) => ({
+        ...item,
+        id: `${lessonTag}_ext_${Date.now()}_${idx}`
+      }));
     }
 
-    function updateExportPreview() {
-      if (!el.rawExportPreview) return;
-      const tsvContent = currentDeck.map(c => 
+    function renderExtractionPreview(cards) {
+      el.extractedCardsList.innerHTML = '';
+      el.extractionPreviewTitle.textContent = `Extracted Flashcards Preview (${cards.length} found)`;
+
+      cards.forEach((card, i) => {
+        const div = document.createElement('div');
+        div.className = "flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800";
+        div.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-hanzi font-bold text-white text-sm">${card.hanzi}</span>
+              <span class="text-cyan-400 font-semibold">${card.pinyin}</span>
+              <span class="text-slate-400">• ${card.meaning}</span>
+            </div>
+            <div class="font-hanzi text-slate-500 text-[11px] mt-0.5">${card.sentence}</div>
+          </div>
+          <span class="px-2 py-0.5 rounded bg-cyan-500/10 text-cyan-400 text-[10px] font-bold">${card.tag}</span>
+        `;
+        el.extractedCardsList.appendChild(div);
+      });
+
+      el.extractionPreviewContainer.classList.remove('hidden');
+    }
+
+    function generateTsvExport() {
+      const header = "Hanzi\tPinyin\tMeaning\tExample_Sentence\tSentence_Translation\tTags";
+      const rows = currentDeck.map(c => 
         `${c.hanzi}\t${c.pinyin}\t${c.meaning}\t${c.sentence}\t${c.trans}\t${c.tag}`
-      ).join('\n');
-      el.rawExportPreview.value = tsvContent;
+      );
+      return [header, ...rows].join('\r\n');
     }
 
-    function downloadFile(filename, content, mime = 'text/plain;charset=utf-8;') {
-      const blob = new Blob(["\uFEFF" + content], { type: mime });
+    function generateCsvExport() {
+      const header = '"Hanzi","Pinyin","Meaning","Example_Sentence","Sentence_Translation","Tags"';
+      const rows = currentDeck.map(c => {
+        const clean = str => `"${(str || '').replace(/"/g, '""')}"`;
+        return `${clean(c.hanzi)},${clean(c.pinyin)},${clean(c.meaning)},${clean(c.sentence)},${clean(c.trans)},${clean(c.tag)}`;
+      });
+      return [header, ...rows].join('\r\n');
+    }
+
+    function generate2FieldExport() {
+      const header = "Front\tBack";
+      const rows = currentDeck.map(c => {
+        const front = `<div style='font-size:32px; font-weight:bold;'>${c.hanzi}</div><div style='color:#64748b; margin-top:8px;'>${c.sentence}</div>`;
+        const back = `<div style='font-size:24px; color:#0284c7; font-weight:bold;'>${c.pinyin}</div><div style='font-size:20px; font-weight:bold; margin-top:4px;'>${c.meaning}</div><hr style='margin:12px 0; border:0; border-top:1px solid #334155;'><div style='color:#38bdf8;'>${c.sentencePinyin || ''}</div><div style='color:#94a3b8;'>${c.trans}</div><div style='margin-top:8px; font-size:12px; color:#64748b;'>[${c.tag}]</div>`;
+        return `${front.replace(/\t/g, ' ')}\t${back.replace(/\t/g, ' ')}`;
+      });
+      return [header, ...rows].join('\r\n');
+    }
+
+    function downloadFile(content, filename, mimeType) {
+      const blob = new Blob([content], { type: `${mimeType};charset=utf-8;` });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -890,123 +1327,278 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+      showToast(`Downloaded ${filename}`);
+    }
+
+    function updateExportPreviews() {
+      if (el.rawExportPreview) {
+        el.rawExportPreview.value = generateTsvExport();
+      }
     }
 
     function showToast(msg) {
-      if (!el.toast || !el.toastMsg) return;
+      if (!el.toast) return;
       el.toastMsg.textContent = msg;
-      el.toast.classList.remove('translate-y-20', 'opacity-0');
+      el.toast.classList.remove('opacity-0', 'translate-y-20', 'pointer-events-none');
+      el.toast.classList.add('opacity-100', 'translate-y-0');
       setTimeout(() => {
-        el.toast.classList.add('translate-y-20', 'opacity-0');
+        el.toast.classList.add('opacity-0', 'translate-y-20', 'pointer-events-none');
+        el.toast.classList.remove('opacity-100', 'translate-y-0');
       }, 2500);
     }
 
-    // Tab Navigation
-    const views = {
-      study: document.getElementById('view-study'),
-      browser: document.getElementById('view-browser'),
-      add: document.getElementById('view-add'),
-      export: document.getElementById('view-export')
-    };
+    // View Switcher
+    const navButtons = [
+      { btn: document.getElementById('tab-btn-study'), view: document.getElementById('view-study') },
+      { btn: document.getElementById('tab-btn-browser'), view: document.getElementById('view-browser') },
+      { btn: document.getElementById('tab-btn-add'), view: document.getElementById('view-add') },
+      { btn: document.getElementById('tab-btn-export'), view: document.getElementById('view-export') }
+    ];
 
-    function switchTab(activeTab) {
-      Object.keys(views).forEach(k => {
-        if (views[k]) views[k].classList.toggle('hidden', k !== activeTab);
+    navButtons.forEach(({ btn, view }) => {
+      btn.addEventListener('click', () => {
+        navButtons.forEach(nb => {
+          nb.btn.classList.remove('bg-cyan-500', 'text-slate-950', 'font-bold');
+          nb.btn.classList.add('text-slate-400');
+          nb.view.classList.add('hidden');
+        });
+        btn.classList.add('bg-cyan-500', 'text-slate-950', 'font-bold');
+        btn.classList.remove('text-slate-400');
+        view.classList.remove('hidden');
+
+        if (view.id === 'view-browser') renderVocabTable();
+        if (view.id === 'view-export') updateExportPreviews();
       });
-      document.querySelectorAll('.nav-tab').forEach(b => {
-        b.classList.remove('bg-cyan-500', 'text-slate-950', 'font-bold');
-        b.classList.add('text-slate-400');
-      });
-      const activeBtn = document.getElementById(`tab-btn-${activeTab}`);
-      if (activeBtn) {
-        activeBtn.classList.remove('text-slate-400');
-        activeBtn.classList.add('bg-cyan-500', 'text-slate-950', 'font-bold');
-      }
-      if (activeTab === 'browser') filterTable();
-      if (activeTab === 'export') updateExportPreview();
-    }
-
-    // Event Listeners
-    document.getElementById('tab-btn-study').addEventListener('click', () => switchTab('study'));
-    document.getElementById('tab-btn-browser').addEventListener('click', () => switchTab('browser'));
-    document.getElementById('tab-btn-add').addEventListener('click', () => switchTab('add'));
-    document.getElementById('tab-btn-export').addEventListener('click', () => switchTab('export'));
-
-    el.flashcardContainer.addEventListener('click', (e) => {
-      if (!e.target.closest('button')) toggleFlip();
     });
 
-    el.btnFlip.addEventListener('click', toggleFlip);
+    // Flashcard Flip & Navigation
+    el.flashcardContainer.addEventListener('click', flipCard);
+    el.btnFlip.addEventListener('click', flipCard);
     el.btnNext.addEventListener('click', nextCard);
     el.btnPrev.addEventListener('click', prevCard);
-    el.btnShuffle.addEventListener('click', () => {
-      studyDeck.sort(() => Math.random() - 0.5);
-      currentStudyIndex = 0;
-      renderCurrentCard();
-      showToast("Deck shuffled!");
+    el.btnShuffle.addEventListener('click', shuffleDeck);
+    el.btnMarkMaster.addEventListener('click', toggleMasterCurrentCard);
+    el.btnFrontMaster.addEventListener('click', toggleMasterCurrentCard);
+    el.btnBackMaster.addEventListener('click', toggleMasterCurrentCard);
+
+    // Audio Playback
+    el.btnFrontAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = studyDeck[currentStudyIndex];
+      if (card) playTaiwaneseAudio(card.hanzi);
+    });
+    el.btnBackAudio.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const card = studyDeck[currentStudyIndex];
+      if (card) playTaiwaneseAudio(card.sentence || card.hanzi);
     });
 
+    // Pinyin Toggles
     el.btnTogglePinyin.addEventListener('click', togglePinyin);
-    el.btnFrontTogglePinyin.addEventListener('click', togglePinyin);
+    el.btnFrontTogglePinyin.addEventListener('click', (e) => {
+      e.stopPropagation();
+      togglePinyin();
+    });
 
-    el.btnFrontAudio.addEventListener('click', () => playAudio(studyDeck[currentStudyIndex].hanzi));
-    el.btnBackAudio.addEventListener('click', () => playAudio(studyDeck[currentStudyIndex].hanzi));
+    // Lesson Filters
+    el.studyLessonFilter.addEventListener('change', () => resetStudyDeck(true));
+    el.tableLessonFilter.addEventListener('change', renderVocabTable);
+    el.searchInput.addEventListener('input', renderVocabTable);
 
-    el.btnFrontMaster.addEventListener('click', toggleMasterCurrent);
-    el.btnBackMaster.addEventListener('click', toggleMasterCurrent);
-    el.btnMarkMaster.addEventListener('click', toggleMasterCurrent);
+    // Importer Modes
+    el.modeBtnPdf.addEventListener('click', () => {
+      el.modeBtnPdf.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+      el.modeBtnPdf.classList.remove('text-slate-400', 'border-transparent');
+      el.modeBtnManual.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+      el.modeBtnManual.classList.add('text-slate-400', 'border-transparent');
+      el.sectionPdfUpload.classList.remove('hidden');
+      el.sectionManualPaste.classList.add('hidden');
+    });
 
-    el.studyLessonFilter.addEventListener('change', () => {
-      currentStudyIndex = 0;
-      resetStudyDeck(true);
+    el.modeBtnManual.addEventListener('click', () => {
+      el.modeBtnManual.classList.add('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+      el.modeBtnManual.classList.remove('text-slate-400', 'border-transparent');
+      el.modeBtnPdf.classList.remove('bg-cyan-500/20', 'text-cyan-300', 'border-cyan-500/40');
+      el.modeBtnPdf.classList.add('text-slate-400', 'border-transparent');
+      el.sectionManualPaste.classList.remove('hidden');
+      el.sectionPdfUpload.classList.add('hidden');
+    });
+
+    // File Drag and Drop on Native Label
+    el.pdfFileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files[0]) {
+        handlePdfSelection(e.target.files[0]);
+      }
+    });
+
+    el.dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      el.dropZone.classList.add('border-cyan-400', 'bg-cyan-500/10');
+    });
+    el.dropZone.addEventListener('dragleave', () => {
+      el.dropZone.classList.remove('border-cyan-400', 'bg-cyan-500/10');
+    });
+    el.dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      el.dropZone.classList.remove('border-cyan-400', 'bg-cyan-500/10');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+        handlePdfSelection(e.dataTransfer.files[0]);
+      }
+    });
+
+    // PDF Extraction Trigger
+    el.btnExtractPdf.addEventListener('click', async () => {
+      if (!selectedPdfFile) {
+        setImporterStatus("Please select or drop your Tuesday PDF file first", "error");
+        showToast("Please choose a PDF file first");
+        return;
+      }
+
+      const lessonTag = (el.inputLessonTag.value || 'Lesson_New').trim();
+      const apiKey = (localStorage.getItem(API_KEY_STORAGE) || "").trim();
+
+      el.btnExtractPdf.disabled = true;
+      el.btnExtractPdf.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Processing PDF...`;
+      setImporterStatus("Reading PDF contents...", "info");
+
+      try {
+        let extractedCards = [];
+
+        if (apiKey) {
+          setImporterStatus("Extracting vocabulary using Gemini AI...", "info");
+          const base64Data = await fileToBase64(selectedPdfFile);
+          extractedCards = await callGeminiExtractPdf(base64Data, lessonTag, apiKey);
+        } else {
+          setImporterStatus("Reading PDF text in browser (No API key required)...", "info");
+          const pdfText = await extractTextWithPdfJs(selectedPdfFile);
+          extractedCards = parseVocabularyFromText(pdfText, lessonTag);
+
+          if (!extractedCards || extractedCards.length === 0) {
+            el.manualPasteInput.value = pdfText.replace(/--- Page \d+ ---/g, '').trim();
+            el.modeBtnManual.click();
+            setImporterStatus("PDF text read! Formatted into Quick Text editor below for easy review.", "success");
+            showToast("Opened in Quick Text editor");
+            return;
+          }
+        }
+
+        if (Array.isArray(extractedCards) && extractedCards.length > 0) {
+          stagedExtractedCards = extractedCards;
+          renderExtractionPreview(extractedCards);
+          setImporterStatus(`Successfully extracted ${extractedCards.length} cards from ${selectedPdfFile.name}!`, "success");
+          showToast(`Extracted ${extractedCards.length} cards!`);
+        } else {
+          setImporterStatus("No vocabulary detected. You can paste notes directly into Quick Text.", "error");
+        }
+      } catch (err) {
+        console.error("Extraction error:", err);
+        setImporterStatus(`Extraction error: ${err.message || 'Check file or API key'}. Opening manual paste...`, "error");
+        try {
+          const rawText = await extractTextWithPdfJs(selectedPdfFile);
+          el.manualPasteInput.value = rawText;
+          el.modeBtnManual.click();
+        } catch (e) {}
+      } finally {
+        el.btnExtractPdf.disabled = false;
+        el.btnExtractPdf.innerHTML = `<i class="fa-solid fa-wand-magic-sparkles"></i> Extract & Generate Flashcards`;
+      }
+    });
+
+    // Confirm Add Extracted Cards
+    el.btnConfirmAddExtracted.addEventListener('click', () => {
+      if (stagedExtractedCards.length === 0) return;
+      currentDeck = [...currentDeck, ...stagedExtractedCards];
       saveState();
+      resetStudyDeck(false);
+      renderVocabTable();
+      updateExportPreviews();
+      el.extractionPreviewContainer.classList.add('hidden');
+      stagedExtractedCards = [];
+      setImporterStatus("All cards added to your deck and saved!", "success");
+      showToast("Cards added successfully!");
     });
 
-    el.tableLessonFilter.addEventListener('change', filterTable);
-    el.searchInput.addEventListener('input', filterTable);
+    // Manual Paste Add
+    el.btnAddManual.addEventListener('click', () => {
+      const raw = el.manualPasteInput.value.trim();
+      const tag = (el.inputManualTag.value || 'Lesson_Manual').trim();
+      if (!raw) return;
 
-    // Download handlers
-    el.btnDownloadTab.addEventListener('click', () => {
-      const content = currentDeck.map(c => `${c.hanzi}\t${c.pinyin}\t${c.meaning}\t${c.sentence}\t${c.trans}\t${c.tag}`).join('\r\n');
-      downloadFile('mandarin_cards_tab_separated.txt', content);
-      showToast("Downloaded Tab-separated deck!");
+      const lines = raw.split(/\r?\n/).filter(Boolean);
+      const newCards = [];
+
+      lines.forEach((line, i) => {
+        const parts = line.split(/[,\t]+/).map(s => s.trim());
+        if (parts.length >= 2) {
+          newCards.push({
+            id: `${tag}_man_${Date.now()}_${i}`,
+            hanzi: parts[0],
+            pinyin: parts[1] || '',
+            meaning: parts[2] || parts[0],
+            sentence: parts[3] || `${parts[0]}。`,
+            sentencePinyin: parts[4] || '',
+            trans: parts[5] || parts[2] || '',
+            tag: tag
+          });
+        }
+      });
+
+      if (newCards.length > 0) {
+        currentDeck = [...currentDeck, ...newCards];
+        saveState();
+        resetStudyDeck(false);
+        renderVocabTable();
+        updateExportPreviews();
+        el.manualPasteInput.value = '';
+        showToast(`Added ${newCards.length} cards!`);
+      } else {
+        showToast("Please check note formatting");
+      }
     });
 
-    el.btnDownloadCsv.addEventListener('click', () => {
-      const header = '"Hanzi","Pinyin","Meaning","Example_Sentence","Sentence_Translation","Tags"\r\n';
-      const rows = currentDeck.map(c => `"${c.hanzi}","${c.pinyin}","${c.meaning.replace(/"/g, '""')}","${c.sentence}","${c.trans.replace(/"/g, '""')}","${c.tag}"`).join('\r\n');
-      downloadFile('mandarin_lessons_batch.csv', header + rows, 'text/csv;charset=utf-8;');
-      showToast("Downloaded CSV deck!");
-    });
-
-    el.btnDownload2field.addEventListener('click', () => {
-      const content = currentDeck.map(c => {
-        const front = `${c.hanzi}<br><small style="color:#0ea5e9;">${c.pinyin}</small>`;
-        const back = `<b>${c.meaning}</b><hr><div style="font-size:0.9em;">${c.sentence}<br><i style="color:#64748b;">${c.trans}</i></div>`;
-        return `${front}\t${back}`;
-      }).join('\r\n');
-      downloadFile('mandarin_basic_anki_deck.txt', content);
-      showToast("Downloaded 2-Field Anki Deck!");
-    });
-
-    // Backup JSON Deck
+    // Backup & Restore
     el.btnExportBackup.addEventListener('click', () => {
-      const json = JSON.stringify({ deck: currentDeck, masteredIds: Array.from(masteredIds) }, null, 2);
-      downloadFile('mandarin_studio_backup.json', json, 'application/json');
+      const jsonStr = JSON.stringify({ deck: currentDeck, masteredIds: Array.from(masteredIds) }, null, 2);
+      downloadFile(jsonStr, `mandarin_deck_backup_${Date.now()}.json`, 'application/json');
     });
 
-    // Keyboard Shortcuts
-    window.addEventListener('keydown', (e) => {
-      if (['input', 'textarea', 'select'].includes(document.activeElement.tagName.toLowerCase())) return;
-      if (e.code === 'Space') { e.preventDefault(); toggleFlip(); }
-      else if (e.code === 'ArrowRight') { e.preventDefault(); nextCard(); }
-      else if (e.code === 'ArrowLeft') { e.preventDefault(); prevCard(); }
-      else if (e.key.toLowerCase() === 'p') { e.preventDefault(); togglePinyin(); }
-      else if (e.key.toLowerCase() === 'a') { e.preventDefault(); if (studyDeck[currentStudyIndex]) playAudio(studyDeck[currentStudyIndex].hanzi); }
-      else if (e.key.toLowerCase() === 'm') { e.preventDefault(); toggleMasterCurrent(); }
+    el.restoreFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          if (Array.isArray(parsed.deck)) {
+            currentDeck = parsed.deck;
+            if (Array.isArray(parsed.masteredIds)) {
+              masteredIds = new Set(parsed.masteredIds);
+            }
+            saveState();
+            resetStudyDeck(true);
+            renderVocabTable();
+            updateExportPreviews();
+            showToast("Backup restored successfully!");
+          }
+        } catch (err) {
+          showToast("Invalid JSON backup file");
+        }
+      };
+      reader.readAsText(file);
     });
 
-    // Settings Modal Handlers
+    // Export Downloads
+    el.btnDownloadTab.addEventListener('click', () => downloadFile(generateTsvExport(), 'mandarin_cards_tab_separated.txt', 'text/tab-separated-values'));
+    el.btnDownloadCsv.addEventListener('click', () => downloadFile(generateCsvExport(), 'mandarin_cards_batch.csv', 'text/csv'));
+    el.btnDownload2field.addEventListener('click', () => downloadFile(generate2FieldExport(), 'mandarin_anki_basic_2field.txt', 'text/tab-separated-values'));
+
+    document.getElementById('btn-copy-raw').addEventListener('click', () => {
+      el.rawExportPreview.select();
+      document.execCommand('copy');
+      showToast("Copied export to clipboard!");
+    });
+
+    // Settings Modal
     el.btnOpenSettings.addEventListener('click', () => {
       el.inputStandaloneApiKey.value = localStorage.getItem(API_KEY_STORAGE) || "";
       el.settingsModal.classList.remove('hidden');
@@ -1018,13 +1610,38 @@
       showToast("Settings saved!");
     });
 
-    // Lifecycle Startup
+    // Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flipCard();
+      } else if (e.code === 'ArrowRight') {
+        e.preventDefault();
+        nextCard();
+      } else if (e.code === 'ArrowLeft') {
+        e.preventDefault();
+        prevCard();
+      } else if (e.key.toLowerCase() === 'p') {
+        e.preventDefault();
+        togglePinyin();
+      } else if (e.key.toLowerCase() === 'm') {
+        e.preventDefault();
+        toggleMasterCurrentCard();
+      } else if (e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        const card = studyDeck[currentStudyIndex];
+        if (card) playTaiwaneseAudio(card.hanzi);
+      }
+    });
+
+    // Window Init
     window.addEventListener('load', () => {
-      loadSavedData();
+      loadSavedState();
       updateCountsAndFilters();
       resetStudyDeck(false);
-      filterTable();
-      updatePinyinUI();
+      updatePinyinUI(); // Disabled by default
+      updateExportPreviews();
     });
   </script>
 </body>
