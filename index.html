@@ -15,13 +15,12 @@
   <!-- PDF.js for client-side PDF text extraction -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    // Configure PDF.js worker
     if (window.pdfjsLib) {
       window.pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
     }
   </script>
 
-  <!-- Inter Font -->
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet" />
@@ -34,27 +33,11 @@
       -webkit-tap-highlight-color: transparent;
       user-select: none;
     }
-
-    /* 3D Flip Card Styles */
-    .perspective-1000 {
-      perspective: 1200px;
-    }
-    .transform-style-3d {
-      transform-style: preserve-3d;
-    }
-    .backface-hidden {
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
-    }
-    .rotate-y-180 {
-      transform: rotateY(180deg);
-    }
-
-    /* Ruby Pinyin Typography */
-    ruby {
-      ruby-align: center;
-      ruby-position: over;
-    }
+    .perspective-1000 { perspective: 1200px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+    .backface-hidden { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+    .rotate-y-180 { transform: rotateY(180deg); }
+    ruby { ruby-align: center; ruby-position: over; }
     rt {
       font-family: 'Inter', sans-serif;
       font-size: 0.38em;
@@ -63,38 +46,20 @@
       letter-spacing: 0.04em;
       user-select: none;
     }
-
-    /* Hide Pinyin by default */
-    body.hide-pinyin rt {
+    body.hide-pinyin rt, body.hide-pinyin .pinyin-label {
       display: none !important;
     }
-    body.hide-pinyin .pinyin-label {
-      display: none !important;
-    }
-
-    /* Custom Smooth Scrollbar */
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #090d16;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #1e293b;
-      border-radius: 9999px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #334155;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #090d16; }
+    ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #334155; }
   </style>
 </head>
 <body class="min-h-screen flex flex-col bg-slate-950 text-slate-100 hide-pinyin">
 
+  <!-- Header -->
   <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800/80 px-4 py-3">
     <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      
-      <!-- Brand & Status -->
       <div class="flex items-center gap-3">
         <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-slate-950 font-black text-xl shadow-lg shadow-cyan-500/20">
           華
@@ -140,12 +105,9 @@
   <!-- Main Container -->
   <main class="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center">
 
+    <!-- View: Study Cards -->
     <section id="view-study" class="view-panel flex flex-col items-center max-w-2xl mx-auto w-full space-y-4">
-      
-      <!-- Study Toolbar -->
       <div class="w-full flex flex-wrap items-center justify-between gap-2 bg-slate-900/60 p-2.5 rounded-2xl border border-slate-800/80 text-xs">
-        
-        <!-- Lesson Filter Selector -->
         <div class="flex items-center gap-2">
           <label for="study-lesson-filter" class="text-slate-400 font-medium">Lesson:</label>
           <select id="study-lesson-filter" class="bg-slate-950 border border-slate-700 text-cyan-300 font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:border-cyan-500">
@@ -153,22 +115,21 @@
           </select>
         </div>
 
-        <!-- Controls: Pinyin Toggle, Audio, Shuffle -->
         <div class="flex items-center gap-2">
           <button id="btn-toggle-pinyin" class="px-3 py-1.5 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:border-cyan-500 font-semibold transition-all flex items-center gap-1.5">
             <i class="fa-solid fa-font text-cyan-400"></i>
             <span>Pinyin: <strong id="pinyin-status-text" class="text-rose-400">OFF</strong></span>
           </button>
-          <button id="btn-shuffle-deck" title="Shuffle current deck" class="p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:text-cyan-400 transition-all">
+          <button id="btn-shuffle-deck" title="Shuffle deck" class="p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:text-cyan-400 transition-all">
             <i class="fa-solid fa-shuffle"></i>
           </button>
-          <button id="btn-reset-deck" title="Restart deck from start" class="p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:text-cyan-400 transition-all">
+          <button id="btn-reset-deck" title="Restart from card 1" class="p-2 rounded-xl border border-slate-700 bg-slate-950 text-slate-300 hover:text-cyan-400 transition-all">
             <i class="fa-solid fa-rotate-left"></i>
           </button>
         </div>
       </div>
 
-      <!-- Progress Bar & Counter -->
+      <!-- Progress -->
       <div class="w-full space-y-1.5">
         <div class="flex justify-between text-xs font-semibold text-slate-400">
           <span id="study-card-counter">Card 1 of 1</span>
@@ -179,14 +140,12 @@
         </div>
       </div>
 
-      <!-- 3D Flashcard Container -->
+      <!-- 3D Card -->
       <div class="w-full perspective-1000 min-h-[380px] sm:min-h-[420px] cursor-pointer" id="flashcard-container">
         <div id="flashcard" class="relative w-full h-full min-h-[380px] sm:min-h-[420px] transform-style-3d transition-transform duration-500 rounded-3xl border border-slate-800 bg-slate-900 shadow-2xl hover:border-slate-700">
           
-          <!-- FRONT OF CARD -->
+          <!-- FRONT -->
           <div class="absolute inset-0 w-full h-full backface-hidden rounded-3xl p-6 sm:p-8 flex flex-col justify-between bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80">
-            
-            <!-- Top Card Header -->
             <div class="flex items-center justify-between">
               <span id="card-tag-badge" class="px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-xs font-bold tracking-wide">
                 Lesson
@@ -195,23 +154,17 @@
                 <button id="btn-audio-front" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-slate-300 transition-all flex items-center justify-center text-sm" title="Pronounce Word">
                   <i class="fa-solid fa-volume-high"></i>
                 </button>
-                <button id="btn-master-card" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 transition-all flex items-center justify-center text-sm" title="Mark as Mastered">
+                <button id="btn-master-card" class="w-9 h-9 rounded-full bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 transition-all flex items-center justify-center text-sm" title="Mark Mastered">
                   <i class="fa-regular fa-star" id="star-icon"></i>
                 </button>
               </div>
             </div>
 
-            <!-- Central Vocabulary Word -->
             <div class="text-center py-6">
-              <h2 id="card-hanzi" class="text-5xl sm:text-7xl font-black text-white tracking-wider leading-relaxed">
-                --
-              </h2>
-              <p id="card-pinyin-sub" class="pinyin-label text-cyan-400 font-semibold text-lg sm:text-xl mt-2 tracking-wide">
-                --
-              </p>
+              <h2 id="card-hanzi" class="text-5xl sm:text-7xl font-black text-white tracking-wider leading-relaxed">--</h2>
+              <p id="card-pinyin-sub" class="pinyin-label text-cyan-400 font-semibold text-lg sm:text-xl mt-2 tracking-wide">--</p>
             </div>
 
-            <!-- Bottom Example Sentence -->
             <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800/80 text-center space-y-1">
               <div class="flex items-center justify-center gap-2 text-xs text-slate-400 font-bold uppercase tracking-wider mb-1">
                 <span>Example Sentence</span>
@@ -219,24 +172,17 @@
                   <i class="fa-solid fa-volume-low"></i>
                 </button>
               </div>
-              <p id="card-sentence" class="text-base sm:text-lg font-medium text-slate-200">
-                --
-              </p>
-              <p id="card-sentence-pinyin" class="pinyin-label text-xs sm:text-sm text-cyan-400 font-medium">
-                --
-              </p>
+              <p id="card-sentence" class="text-base sm:text-lg font-medium text-slate-200">--</p>
+              <p id="card-sentence-pinyin" class="pinyin-label text-xs sm:text-sm text-cyan-400 font-medium">--</p>
             </div>
 
-            <!-- Flip Hint -->
             <div class="text-center text-[11px] text-slate-500 font-medium">
               Click anywhere or press <kbd class="px-1.5 py-0.5 bg-slate-800 rounded text-slate-300">Space</kbd> to flip
             </div>
           </div>
 
-          <!-- BACK OF CARD -->
+          <!-- BACK -->
           <div class="absolute inset-0 w-full h-full backface-hidden rotate-y-180 rounded-3xl p-6 sm:p-8 flex flex-col justify-between bg-gradient-to-b from-slate-900 to-slate-950 border border-cyan-500/30">
-            
-            <!-- Top Back Header -->
             <div class="flex items-center justify-between">
               <span class="text-xs font-bold text-cyan-400 flex items-center gap-1.5">
                 <i class="fa-solid fa-lightbulb"></i> Meaning & Translation
@@ -246,35 +192,25 @@
               </button>
             </div>
 
-            <!-- Definition Block -->
             <div class="text-center py-4 space-y-2">
               <p class="text-xs uppercase tracking-widest text-slate-500 font-bold">Definition</p>
-              <h3 id="card-meaning" class="text-2xl sm:text-3xl font-extrabold text-cyan-300 tracking-tight">
-                --
-              </h3>
-              <p id="card-back-pinyin" class="text-slate-400 text-sm sm:text-base font-semibold">
-                --
-              </p>
+              <h3 id="card-meaning" class="text-2xl sm:text-3xl font-extrabold text-cyan-300 tracking-tight">--</h3>
+              <p id="card-back-pinyin" class="text-slate-400 text-sm sm:text-base font-semibold">--</p>
             </div>
 
-            <!-- Sentence Translation Block -->
             <div class="bg-slate-950/80 rounded-2xl p-4 border border-slate-800 space-y-2">
               <p class="text-xs font-bold text-slate-400 uppercase tracking-wide">Sentence Translation</p>
-              <p id="card-trans" class="text-sm sm:text-base text-slate-200 font-medium leading-relaxed">
-                --
-              </p>
+              <p id="card-trans" class="text-sm sm:text-base text-slate-200 font-medium leading-relaxed">--</p>
             </div>
 
-            <!-- Flip Back Hint -->
             <div class="text-center text-[11px] text-slate-500 font-medium">
               Click anywhere to flip back
             </div>
           </div>
-
         </div>
       </div>
 
-      <!-- Action Navigation Buttons -->
+      <!-- Study Buttons -->
       <div class="w-full flex items-center justify-between gap-3 pt-2">
         <button id="btn-prev-card" class="flex-1 py-3 px-4 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 text-white font-bold text-sm transition-all flex items-center justify-center gap-2 active:scale-95">
           <i class="fa-solid fa-arrow-left"></i> Previous
@@ -286,32 +222,23 @@
           Next <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
-
     </section>
 
+    <!-- View: Vocab Table Browser -->
     <section id="view-browser" class="view-panel hidden flex-col space-y-4 max-w-5xl mx-auto w-full">
-      
-      <!-- Table Header & Controls -->
       <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-900/80 p-4 rounded-2xl border border-slate-800">
         <div class="flex flex-wrap items-center gap-3">
-          <!-- Search Input -->
           <div class="relative">
             <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 text-xs"></i>
             <input id="browser-search" type="text" placeholder="Search Hanzi, Pinyin, or Meaning..." class="pl-9 pr-4 py-2 bg-slate-950 border border-slate-800 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500 w-52 sm:w-72" />
           </div>
-
-          <!-- Lesson Filter -->
           <select id="browser-lesson-filter" class="bg-slate-950 border border-slate-800 text-cyan-300 font-semibold rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-cyan-500">
             <option value="ALL">All Lessons</option>
           </select>
         </div>
-
-        <div id="browser-count" class="text-xs text-slate-400 font-semibold">
-          Showing 0 cards
-        </div>
+        <div id="browser-count" class="text-xs text-slate-400 font-semibold">Showing 0 cards</div>
       </div>
 
-      <!-- Table Container -->
       <div class="bg-slate-900/60 rounded-2xl border border-slate-800 overflow-hidden">
         <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
           <table class="w-full text-left border-collapse text-xs">
@@ -326,18 +253,14 @@
                 <th class="py-3 px-4 w-16 text-center">Action</th>
               </tr>
             </thead>
-            <tbody id="browser-table-body" class="divide-y divide-slate-800/60">
-              <!-- Rendered via JavaScript -->
-            </tbody>
+            <tbody id="browser-table-body" class="divide-y divide-slate-800/60"></tbody>
           </table>
         </div>
       </div>
-
     </section>
 
+    <!-- View: Add Tuesday Lesson -->
     <section id="view-add" class="view-panel hidden flex-col space-y-6 max-w-3xl mx-auto w-full">
-      
-      <!-- Card Importer Header -->
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800 pb-4">
           <div>
@@ -345,7 +268,7 @@
               <i class="fa-solid fa-wand-magic-sparkles text-cyan-400"></i> Automatic Tuesday PDF Importer
             </h2>
             <p class="text-xs text-slate-400 mt-1">
-              Upload any weekly teacher PDF. Powered by AI to recognize any layout, fonts, and vocabulary automatically.
+              Upload your weekly vocabulary PDF. Supports Google Gemini Vision AI or client-side PDF text parser.
             </p>
           </div>
           <div class="flex items-center gap-2">
@@ -359,24 +282,23 @@
           </div>
         </div>
 
-        <!-- AI Engine Status & Key Quick-Setup -->
+        <!-- AI Engine Status -->
         <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center gap-2 text-xs">
-            <span id="ai-engine-badge" class="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span id="ai-engine-badge" class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
             <span class="text-slate-300 font-medium">AI Smart PDF Engine:</span>
-            <span id="ai-engine-status-label" class="text-emerald-400 font-bold">Ready</span>
+            <span id="ai-engine-status-label" class="text-amber-400 font-bold">Paste API Key to Enable AI</span>
           </div>
           <div class="flex items-center gap-2 flex-1 sm:justify-end min-w-[240px]">
-            <input id="quick-api-key-input" type="password" placeholder="Gemini API Key (stored locally)" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500 w-full sm:w-56" />
+            <input id="quick-api-key-input" type="password" placeholder="Gemini API Key (stored in browser)" class="px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-700 text-cyan-300 font-mono text-xs focus:outline-none focus:border-cyan-500 w-full sm:w-56" />
             <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" class="text-[11px] text-cyan-400 hover:underline whitespace-nowrap flex items-center gap-1">
               Get Key <i class="fa-solid fa-arrow-up-right-from-square text-[9px]"></i>
             </a>
           </div>
         </div>
 
-        <!-- PDF Upload Form -->
+        <!-- PDF Dropzone -->
         <div class="space-y-4">
-          <!-- Native Label Clickable Drop Zone -->
           <label for="pdf-file-input" class="cursor-pointer block border-2 border-dashed border-slate-700 hover:border-cyan-500 rounded-2xl p-8 text-center bg-slate-950/50 transition-all group">
             <input id="pdf-file-input" type="file" accept=".pdf" class="hidden" />
             <div class="w-14 h-14 rounded-full bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto text-2xl mb-3 group-hover:scale-110 transition-transform">
@@ -393,7 +315,6 @@
             </div>
           </label>
 
-          <!-- Lesson Tag Input and Extract Button -->
           <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-2 flex-1 min-w-[200px]">
               <label for="input-lesson-tag" class="text-xs font-semibold text-slate-400 whitespace-nowrap">Lesson Tag:</label>
@@ -404,22 +325,20 @@
             </button>
           </div>
 
-          <!-- Extraction Status Banner -->
+          <!-- Status Banner -->
           <div id="extraction-status" class="hidden p-3.5 rounded-xl bg-slate-950 border border-slate-800 text-xs flex items-center gap-2.5">
             <i id="extraction-status-icon" class="fa-solid fa-spinner fa-spin text-cyan-400"></i>
-            <span id="extraction-status-text" class="text-slate-300">Analyzing document structure...</span>
+            <span id="extraction-status-text" class="text-slate-300">Ready</span>
           </div>
         </div>
       </div>
 
-      <!-- Quick Text / Notes Paste Alternative -->
+      <!-- Quick Paste Text Alternative -->
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-3">
         <h3 class="text-sm font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-keyboard text-cyan-400"></i> Quick Text / Notes Paste
         </h3>
-        <p class="text-xs text-slate-400">
-          Paste teacher slides, notes, or TSV rows directly:
-        </p>
+        <p class="text-xs text-slate-400">Paste teacher slides, notes, or TSV rows directly:</p>
         <textarea id="input-quick-paste" rows="4" placeholder="7:好像 to seem like
 Ex:我看天空黑黑的，好像要下雨了
 8:會 will / be going to" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-cyan-300 focus:outline-none focus:border-cyan-500"></textarea>
@@ -430,7 +349,7 @@ Ex:我看天空黑黑的，好像要下雨了
         </div>
       </div>
 
-      // Extraction Preview Table
+      <!-- Preview Container -->
       <div id="preview-container" class="hidden bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
         <div class="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 class="text-sm font-bold text-white flex items-center gap-2">
@@ -440,15 +359,12 @@ Ex:我看天空黑黑的，好像要下雨了
             <i class="fa-solid fa-check-double"></i> Save All to Study Deck
           </button>
         </div>
-        <div class="max-h-72 overflow-y-auto divide-y divide-slate-800/80" id="preview-cards-list">
-          <!-- Preview Items Rendered Here -->
-        </div>
+        <div class="max-h-72 overflow-y-auto divide-y divide-slate-800/80" id="preview-cards-list"></div>
       </div>
-
     </section>
 
+    <!-- View: Anki Export -->
     <section id="view-export" class="view-panel hidden flex-col space-y-6 max-w-3xl mx-auto w-full">
-      
       <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-4">
         <div class="border-b border-slate-800 pb-4">
           <h2 class="text-lg font-bold text-white flex items-center gap-2">
@@ -459,17 +375,15 @@ Ex:我看天空黑黑的，好像要下雨了
           </p>
         </div>
 
-        <!-- Download Buttons -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button id="btn-download-tab" class="p-4 rounded-2xl bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-sm transition-all shadow-lg shadow-cyan-500/20 flex items-center justify-center gap-2">
-            <i class="fa-solid fa-file-arrow-down text-base"></i> Download .TXT (Tab Separated - Recommended)
+            <i class="fa-solid fa-file-arrow-down text-base"></i> Download .TXT (Tab Separated)
           </button>
           <button id="btn-download-csv" class="p-4 rounded-2xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-sm transition-all border border-slate-700 flex items-center justify-center gap-2">
             <i class="fa-solid fa-file-csv text-base text-cyan-400"></i> Download .CSV (Comma Separated)
           </button>
         </div>
 
-        <!-- Raw Text Preview & Copy -->
         <div class="space-y-2 pt-2">
           <div class="flex items-center justify-between text-xs font-semibold text-slate-400">
             <span>Raw File Content (Tab Delimited):</span>
@@ -480,12 +394,11 @@ Ex:我看天空黑黑的，好像要下雨了
           <textarea id="export-raw-textarea" readonly rows="8" class="w-full p-3 bg-slate-950 border border-slate-800 rounded-xl text-xs font-mono text-cyan-300 focus:outline-none select-all"></textarea>
         </div>
       </div>
-
     </section>
 
   </main>
 
-  <!-- Settings Modal (GitHub Pages & API Key) -->
+  <!-- Settings Modal -->
   <div id="settings-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
     <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -512,7 +425,7 @@ Ex:我看天空黑黑的，好像要下雨了
         <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
           <p class="text-[11px] font-semibold text-cyan-400">📲 Add to Mobile Home Screen</p>
           <p class="text-[11px] text-slate-400 leading-relaxed">
-            In Safari on iOS, tap <strong>Share ➔ Add to Home Screen</strong>. In Chrome on Android, tap <strong>Menu ➔ Install App</strong> for a full-screen experience.
+            In Safari on iOS, tap <strong>Share ➔ Add to Home Screen</strong>. In Chrome on Android, tap <strong>Menu ➔ Install App</strong> for a full-screen app.
           </p>
         </div>
       </div>
@@ -527,11 +440,10 @@ Ex:我看天空黑黑的，好像要下雨了
   <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none px-4 py-3 rounded-2xl bg-slate-900 border border-slate-700 text-white text-xs font-semibold shadow-2xl flex items-center gap-2">
     <i id="toast-icon" class="fa-solid fa-check text-emerald-400"></i>
-    <span id="toast-msg">Card added successfully!</span>
+    <span id="toast-msg">Success</span>
   </div>
 
   <script>
-    // Master Initial Deck (Proper names Zhang Yijun & Ma Antong filtered out)
     const INITIAL_DECK = [
       // Lesson 02
       { id: "L02_01", hanzi: "的", pinyin: "de", meaning: "possessive / modifying particle", sentence: "我的芒果很好吃。", sentencePinyin: "Wǒ de mángguǒ hěn hǎochī.", trans: "My mango is delicious.", tag: "Lesson02" },
@@ -758,7 +670,7 @@ Ex:我看天空黑黑的，好像要下雨了
       { id: "L11_23", hanzi: "到", pinyin: "dào", meaning: "to arrive / reach / get to", sentence: "從這裡走路十分鐘就到了。", sentencePinyin: "Cóng zhèlǐ zǒulù shí fēnzhōng jiù dào le.", trans: "Walking from here takes only ten minutes to arrive.", tag: "Lesson11" },
       { id: "L11_24", hanzi: "間", pinyin: "jiān", meaning: "measure word for rooms/stores", sentence: "我家附近有一間義大利餐廳。", sentencePinyin: "Wǒ jiā fùjìn yǒu yì jiān yìdàlì cāntīng.", trans: "There is an Italian restaurant near my home.", tag: "Lesson11" },
 
-      // Lesson 12 (Extracted from 費尼薩-0915(vocabulary).pdf)
+      // Lesson 12
       { id: "L12_01", hanzi: "好像", pinyin: "hǎoxiàng", meaning: "to seem like / look like / as if", sentence: "我看天空黑黑的，好像要下雨了。", sentencePinyin: "Wǒ kàn tiānkōng hēihēi de, hǎoxiàng yào xiàyǔ le.", trans: "I see the sky is dark, it seems like it's going to rain.", tag: "Lesson12" },
       { id: "L12_02", hanzi: "會", pinyin: "huì", meaning: "will / be going to / can", sentence: "明天我會去學校。", sentencePinyin: "Míngtiān wǒ huì qù xuéxiào.", trans: "Tomorrow I will go to school.", tag: "Lesson12" },
       { id: "L12_03", hanzi: "等", pinyin: "děng", meaning: "to wait", sentence: "請等我一下。", sentencePinyin: "Qǐng děng wǒ yíxià.", trans: "Please wait a moment for me.", tag: "Lesson12" },
@@ -771,7 +683,6 @@ Ex:我看天空黑黑的，好像要下雨了
       { id: "L12_10", hanzi: "水電費", pinyin: "shuǐdiànfèi", meaning: "utility bills (water and electricity)", sentence: "在台灣，我們的水電費每兩個月付一次錢。", sentencePinyin: "Zài Táiwān, wǒmen de shuǐdiànfèi měi liǎng gè yuè fù yí cì qián.", trans: "In Taiwan, we pay our water and electricity bills once every two months.", tag: "Lesson12" }
     ];
 
-    // Application State
     const STORAGE_KEY = 'mandarin_studio_deck_data_v2';
     const API_KEY_STORAGE = 'mandarin_studio_user_gemini_key';
 
@@ -780,10 +691,9 @@ Ex:我看天空黑黑的，好像要下雨了
     let currentStudyIndex = 0;
     let isFlipped = false;
     let masteredIds = new Set();
-    let showPinyin = false; // Disabled by default
+    let showPinyin = false;
     let pendingExtractedCards = [];
 
-    // DOM Elements Cache
     const el = {
       headerTotalCards: document.getElementById('header-total-cards'),
       studyLessonFilter: document.getElementById('study-lesson-filter'),
@@ -845,17 +755,13 @@ Ex:我看天空黑黑的，好像要下雨了
       toastMsg: document.getElementById('toast-msg'),
       toastIcon: document.getElementById('toast-icon')
     };
-  </script>
 
-  <script>
-    // Load Saved Data from Browser Storage with Auto-Merging for New Default Lessons
     function loadSavedData() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed.deck) && parsed.deck.length > 0) {
-            // Keep saved cards and merge in any newly added default lessons (like Lesson 12)
             const existingHanzi = new Set(parsed.deck.map(c => c.hanzi));
             const newDefaultCards = INITIAL_DECK.filter(c => !existingHanzi.has(c.hanzi));
             currentDeck = [...parsed.deck, ...newDefaultCards].filter(c => c.hanzi !== '張怡君' && c.hanzi !== '馬安同');
@@ -875,7 +781,6 @@ Ex:我看天空黑黑的，好像要下雨了
       }
     }
 
-    // Save Data to Browser Storage
     function saveData() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify({
@@ -891,7 +796,6 @@ Ex:我看天空黑黑的，好像要下雨了
       updateCountsAndFilters();
     }
 
-    // Toast Notification Display
     function showToast(message, isSuccess = true) {
       if (!el.toast) return;
       el.toastMsg.textContent = message;
@@ -902,35 +806,29 @@ Ex:我看天空黑黑的，好像要下雨了
       }, 2500);
     }
 
-    // TTS Native Taiwanese Mandarin Pronunciation
     function speakMandarin(text) {
       if (!('speechSynthesis' in window)) {
-        showToast("Speech synthesis not supported in this browser", false);
+        showToast("Speech synthesis not supported", false);
         return;
       }
       window.speechSynthesis.cancel();
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = 'zh-TW';
-      utterance.rate = 0.85; // Slightly slower for crisp tonal clarity
+      utterance.rate = 0.85;
       utterance.pitch = 1.0;
       window.speechSynthesis.speak(utterance);
     }
-  </script>
 
-  <script>
-    // Build Ruby HTML for Character-level Pinyin
     function buildRubyHanzi(hanzi, pinyin) {
       if (!hanzi) return '';
       const chars = Array.from(hanzi);
       const syllables = (pinyin || '').split(/[\s-]+/).filter(Boolean);
-
       if (chars.length === syllables.length) {
         return chars.map((ch, idx) => `<ruby>${ch}<rt>${syllables[idx]}</rt></ruby>`).join('');
       }
-      return `<ruby>${hanzi}<rt>${pinyin}</rt></ruby>`;
+      return `<ruby>${hanzi}<rt>${pinyin || ''}</rt></ruby>`;
     }
 
-    // Render Current Flashcard
     function renderCurrentCard() {
       if (!studyDeck.length) {
         el.cardHanzi.innerHTML = `<span class="text-3xl font-bold text-slate-500">No cards</span>`;
@@ -950,36 +848,29 @@ Ex:我看天空黑黑的，好像要下雨了
       }
 
       const card = studyDeck[currentStudyIndex];
-
-      // Front of Card
       el.cardTagBadge.textContent = card.tag || 'Vocab';
       el.cardHanzi.innerHTML = buildRubyHanzi(card.hanzi, card.pinyin);
       el.cardPinyinSub.textContent = card.pinyin || '';
       el.cardSentence.innerHTML = buildRubyHanzi(card.sentence, card.sentencePinyin || '');
       el.cardSentencePinyin.textContent = card.sentencePinyin || '';
 
-      // Back of Card
       el.cardMeaning.textContent = card.meaning || '';
       el.cardBackPinyin.textContent = card.pinyin || '';
       el.cardTrans.textContent = card.trans || card.sentence;
 
-      // Mastered Star Icon
       const isMastered = masteredIds.has(card.id);
       el.starIcon.className = isMastered ? 'fa-solid fa-star text-amber-400' : 'fa-regular fa-star text-slate-400';
 
-      // Progress Updates
       el.studyCardCounter.textContent = `Card ${currentStudyIndex + 1} of ${studyDeck.length}`;
       const pct = Math.round(((currentStudyIndex + 1) / studyDeck.length) * 100);
       el.studyProgressBar.style.width = `${pct}%`;
 
-      // Flip back to front on card change
       if (isFlipped) {
         isFlipped = false;
         el.flashcard.classList.remove('rotate-y-180');
       }
     }
 
-    // Reset Study Deck according to Selected Filter
     function resetStudyDeck(resetIndex = false) {
       const filter = el.studyLessonFilter.value;
       if (filter === 'ALL') {
@@ -994,7 +885,6 @@ Ex:我看天空黑黑的，好像要下雨了
       renderCurrentCard();
     }
 
-    // Toggle Flashcard Flip
     function flipFlashcard() {
       isFlipped = !isFlipped;
       if (isFlipped) {
@@ -1004,7 +894,6 @@ Ex:我看天空黑黑的，好像要下雨了
       }
     }
 
-    // Toggle Pinyin Display Mode
     function togglePinyin() {
       showPinyin = !showPinyin;
       if (showPinyin) {
@@ -1017,18 +906,13 @@ Ex:我看天空黑黑的，好像要下雨了
         el.pinyinStatusText.className = 'text-rose-400 font-bold';
       }
     }
-  </script>
 
-  <script>
-    // Update Dropdown Filters and Badge Counters
     function updateCountsAndFilters() {
       el.headerTotalCards.textContent = `${currentDeck.length} cards loaded`;
       el.studyMasteryCounter.textContent = `${masteredIds.size} Mastered`;
 
-      // Collect unique tags
       const tags = Array.from(new Set(currentDeck.map(c => c.tag))).filter(Boolean).sort();
 
-      // Update study filter dropdown
       const curStudyVal = el.studyLessonFilter.value;
       el.studyLessonFilter.innerHTML = '<option value="ALL">All Lessons (Combined)</option>';
       tags.forEach(tag => {
@@ -1041,7 +925,6 @@ Ex:我看天空黑黑的，好像要下雨了
         el.studyLessonFilter.value = curStudyVal;
       }
 
-      // Update browser filter dropdown
       const curBrowserVal = el.browserLessonFilter.value;
       el.browserLessonFilter.innerHTML = '<option value="ALL">All Lessons</option>';
       tags.forEach(tag => {
@@ -1057,7 +940,6 @@ Ex:我看天空黑黑的，好像要下雨了
       updateExportTextarea();
     }
 
-    // Render Table in Vocab Browser
     function renderVocabTable() {
       const query = el.browserSearch.value.trim().toLowerCase();
       const tagFilter = el.browserLessonFilter.value;
@@ -1117,7 +999,6 @@ Ex:我看天空黑黑的，好像要下雨了
       });
     }
 
-    // Delete Card Handler
     window.deleteCard = function(id) {
       currentDeck = currentDeck.filter(c => c.id !== id);
       masteredIds.delete(id);
@@ -1127,7 +1008,6 @@ Ex:我看天空黑黑的，好像要下雨了
       showToast("Card deleted");
     };
 
-    // Update Raw Export Area
     function updateExportTextarea() {
       if (!el.exportRawTextarea) return;
       const header = "Hanzi\tPinyin\tMeaning\tExample_Sentence\tSentence_Translation\tTags\n";
@@ -1136,40 +1016,150 @@ Ex:我看天空黑黑的，好像要下雨了
       ).join('\n');
       el.exportRawTextarea.value = header + rows;
     }
-  </script>
 
-  <script>
-    // PDF Extraction button handler with AI First Layout-Aware Engine
-    const quickApiKeyInput = document.getElementById('quick-api-key-input');
-    const aiEngineBadge = document.getElementById('ai-engine-badge');
-    const aiEngineStatusLabel = document.getElementById('ai-engine-status-label');
+    // PDF Client-Side Text Extractor
+    async function extractTextFromPDF(file) {
+      if (!window.pdfjsLib) throw new Error("PDF.js library not loaded.");
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = "";
 
-    // Sync API key input with LocalStorage
-    if (quickApiKeyInput) {
-      const savedKey = localStorage.getItem(API_KEY_STORAGE) || "";
-      quickApiKeyInput.value = savedKey;
-      updateApiKeyUI(savedKey);
-
-      quickApiKeyInput.addEventListener('input', (e) => {
-        const val = e.target.value.trim();
-        localStorage.setItem(API_KEY_STORAGE, val);
-        updateApiKeyUI(val);
-      });
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(" ");
+        fullText += pageText + "\n";
+      }
+      return fullText;
     }
 
-    function updateApiKeyUI(key) {
-      if (!aiEngineBadge || !aiEngineStatusLabel) return;
-      if (key) {
-        aiEngineBadge.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
-        aiEngineStatusLabel.textContent = "AI Engine Active";
-        aiEngineStatusLabel.className = "text-emerald-400 font-bold";
+    // Local Regex Parser
+    function parseVocabularyFromText(text, defaultTag = "TuesdayLesson") {
+      const cards = [];
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+      let currentCard = null;
+      lines.forEach((line, index) => {
+        const vocabMatch = line.match(/^(\d+)[:：]\s*([^\s]+)\s*(.*)$/);
+        if (vocabMatch) {
+          if (currentCard && currentCard.hanzi) {
+            cards.push(currentCard);
+          }
+          currentCard = {
+            id: `${defaultTag}_${Date.now()}_${index}`,
+            hanzi: vocabMatch[2].trim(),
+            pinyin: '',
+            meaning: vocabMatch[3].trim() || 'Vocabulary',
+            sentence: '',
+            sentencePinyin: '',
+            trans: '',
+            tag: defaultTag
+          };
+          return;
+        }
+
+        if (currentCard && line.startsWith("Ex:")) {
+          currentCard.sentence = line.replace(/^Ex[:：]\s*/, '').trim();
+          return;
+        }
+      });
+
+      if (currentCard && currentCard.hanzi) {
+        cards.push(currentCard);
+      }
+      return cards;
+    }
+
+    // Render Preview Cards in UI
+    function renderPreviewCards(cards) {
+      el.previewCardsList.innerHTML = '';
+      el.previewCount.textContent = cards.length;
+      cards.forEach((card, idx) => {
+        const item = document.createElement('div');
+        item.className = 'py-3 flex items-start justify-between gap-3 text-xs';
+        item.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="font-bold text-white text-base">${card.hanzi}</span>
+              <span class="text-cyan-400 font-semibold">${card.pinyin || ''}</span>
+              <span class="text-slate-400">(${card.meaning})</span>
+            </div>
+            <div class="text-slate-300 mt-1">${card.sentence}</div>
+            ${card.trans ? `<div class="text-[11px] text-slate-500 italic">${card.trans}</div>` : ''}
+          </div>
+          <span class="px-2 py-0.5 rounded-full bg-slate-800 text-cyan-300 text-[10px] font-bold border border-slate-700">
+            ${card.tag}
+          </span>
+        `;
+        el.previewCardsList.appendChild(item);
+      });
+      el.previewContainer.classList.remove('hidden');
+    }
+
+    // Commit Extracted Cards
+    el.btnCommitCards.addEventListener('click', () => {
+      if (!pendingExtractedCards.length) return;
+      currentDeck = [...currentDeck, ...pendingExtractedCards];
+      saveData();
+      resetStudyDeck(false);
+      renderVocabTable();
+      el.previewContainer.classList.add('hidden');
+      pendingExtractedCards = [];
+      showToast(`Added ${pendingExtractedCards.length || 'new'} cards to deck! 🎉`);
+    });
+
+    // Quick Paste Importer
+    el.btnImportQuickPaste.addEventListener('click', () => {
+      const text = el.inputQuickPaste.value.trim();
+      if (!text) {
+        showToast("Please enter text to parse", false);
+        return;
+      }
+      const tag = el.inputLessonTag.value.trim() === 'Auto-Detect' ? 'QuickImport' : el.inputLessonTag.value.trim();
+      const parsed = parseVocabularyFromText(text, tag);
+      if (parsed.length > 0) {
+        currentDeck = [...currentDeck, ...parsed];
+        saveData();
+        resetStudyDeck(false);
+        renderVocabTable();
+        el.inputQuickPaste.value = '';
+        showToast(`Imported ${parsed.length} cards successfully! 🎉`);
       } else {
-        aiEngineBadge.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
-        aiEngineStatusLabel.textContent = "Paste API key to enable AI";
-        aiEngineStatusLabel.className = "text-amber-400 font-bold";
+        showToast("No cards detected. Use '1:詞彙 definition' format", false);
+      }
+    });
+
+    // API Key UI Setup
+    function updateApiKeyUI(key) {
+      if (!el.quickApiKeyInput) return;
+      const badge = document.getElementById('ai-engine-badge');
+      const label = document.getElementById('ai-engine-status-label');
+      if (key) {
+        badge.className = "w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse";
+        label.textContent = "AI Engine Active";
+        label.className = "text-emerald-400 font-bold";
+      } else {
+        badge.className = "w-2.5 h-2.5 rounded-full bg-amber-400";
+        label.textContent = "Paste API key to enable AI";
+        label.className = "text-amber-400 font-bold";
       }
     }
 
+    const savedKey = localStorage.getItem(API_KEY_STORAGE) || "";
+    if (el.inputQuickPaste) {
+      const keyInput = document.getElementById('quick-api-key-input');
+      if (keyInput) {
+        keyInput.value = savedKey;
+        updateApiKeyUI(savedKey);
+        keyInput.addEventListener('input', (e) => {
+          const val = e.target.value.trim();
+          localStorage.setItem(API_KEY_STORAGE, val);
+          updateApiKeyUI(val);
+        });
+      }
+    }
+
+    // PDF Extract Button Listener
     el.btnExtractPdf.addEventListener('click', async () => {
       const file = el.pdfFileInput.files[0];
       if (!file) {
@@ -1177,7 +1167,7 @@ Ex:我看天空黑黑的，好像要下雨了
         return;
       }
 
-      const userKey = (quickApiKeyInput ? quickApiKeyInput.value.trim() : "") || localStorage.getItem(API_KEY_STORAGE) || "";
+      const userKey = (document.getElementById('quick-api-key-input')?.value.trim()) || localStorage.getItem(API_KEY_STORAGE) || "";
       let lessonTagInput = el.inputLessonTag.value.trim();
       if (!lessonTagInput || lessonTagInput.toLowerCase() === 'auto-detect') {
         lessonTagInput = 'AUTO';
@@ -1187,9 +1177,9 @@ Ex:我看天空黑黑的，好像要下雨了
       el.extractionStatusIcon.className = 'fa-solid fa-spinner fa-spin text-cyan-400';
       el.btnExtractPdf.disabled = true;
 
-      // 1. PRIMARY AI PATH: Multimodal PDF Processing via Gemini 3 Flash
+      // Primary AI Engine: Gemini 2.5 Flash
       if (userKey) {
-        el.extractionStatusText.textContent = "Sending PDF to Gemini AI (reading layout, characters, & audio pinyin)...";
+        el.extractionStatusText.textContent = "Sending PDF to Gemini AI (reading layout & characters)...";
         try {
           const base64Data = await new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -1199,25 +1189,24 @@ Ex:我看天空黑黑的，好像要下雨了
           });
 
           const systemPrompt = `You are an expert Taiwanese Mandarin teacher specialized in the "Course in Contemporary Chinese" (當代中文課程) curriculum.
-Your job is to read this lesson PDF and convert every vocabulary item, phrase, and grammar pattern into high-quality flashcards.
-Requirements:
-1. Detect the lesson tag from the PDF headers (e.g. Lesson13, Lesson14). If manual tag is not 'AUTO', use the provided tag '${lessonTagInput}'.
-2. Exclude personal names (e.g., 張怡君, 馬安同).
-3. 'hanzi': Traditional Chinese characters (繁體中文).
-4. 'pinyin': Clean standard Pinyin with tone marks. Correct any teacher slide typographical marks (e.g., 'wõ' -> 'wǒ', 'yũ' -> 'yǔ').
-5. 'meaning': Concise English definition.
-6. 'sentence': The example sentence given in the slide (in Traditional Chinese). If the teacher omitted an example, generate a natural, realistic A1/A2 conversation sentence.
-7. 'sentencePinyin': Full tone-marked Pinyin for the sentence.
-8. 'trans': Natural English translation of the sentence.`;
+Extract every vocabulary item and phrase from this PDF into structured flashcards.
+1. Exclude personal names (e.g., 張怡君, 馬安同).
+2. 'hanzi': Traditional Chinese characters (繁體中文).
+3. 'pinyin': Clean standard Pinyin with tone marks.
+4. 'meaning': English definition.
+5. 'sentence': The example sentence in Traditional Chinese.
+6. 'sentencePinyin': Tone-marked Pinyin for the sentence.
+7. 'trans': English translation.
+8. 'tag': Lesson tag (e.g., '${lessonTagInput === 'AUTO' ? 'TuesdayLesson' : lessonTagInput}').`;
 
-          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${userKey}`;
+          const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${userKey}`;
           const response = await fetch(apiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
               contents: [{
                 parts: [
-                  { text: `Extract all vocabulary cards from this PDF into structured flashcards.` },
+                  { text: `Extract all vocabulary flashcards from this PDF.` },
                   { inlineData: { mimeType: "application/pdf", data: base64Data } }
                 ]
               }],
@@ -1268,11 +1257,11 @@ Requirements:
             }
           }
         } catch (aiErr) {
-          console.warn("AI extraction encountered an error, trying local fallback:", aiErr);
+          console.warn("AI extraction error, falling back to local:", aiErr);
         }
       }
 
-      // 2. OFFLINE / NO-KEY FALLBACK: Spatial PDF.js Extraction
+      // Offline / Local PDF.js Fallback
       el.extractionStatusText.textContent = "Processing PDF locally with client-side text extractor...";
       try {
         const rawText = await extractTextFromPDF(file);
@@ -1283,12 +1272,12 @@ Requirements:
           pendingExtractedCards = localCards;
           renderPreviewCards(localCards);
           el.extractionStatus.classList.add('hidden');
-          showToast(`Parsed ${localCards.length} vocabulary words locally!`);
+          showToast(`Parsed ${localCards.length} vocabulary words!`);
         } else {
           el.inputQuickPaste.value = rawText;
           el.extractionStatusText.textContent = userKey 
-            ? "No cards detected. Review raw extracted text in Quick Notes below." 
-            : "Tip: Paste your free Gemini API key above for automatic 100% layout recognition on any future PDF!";
+            ? "Could not auto-structure. Review extracted text in Quick Notes below." 
+            : "No API key configured. Raw text copied to Quick Notes below.";
           el.extractionStatusIcon.className = 'fa-solid fa-circle-info text-amber-400';
           showToast("Review text in Quick Notes below", false);
         }
@@ -1300,10 +1289,8 @@ Requirements:
         el.btnExtractPdf.disabled = false;
       }
     });
-  </script>
 
-  <script>
-    // Tab Switching Logic
+    // Tab Navigation
     const tabs = {
       'tab-btn-study': 'view-study',
       'tab-btn-browser': 'view-browser',
@@ -1317,15 +1304,12 @@ Requirements:
       if (!btn || !view) return;
 
       btn.addEventListener('click', () => {
-        // Reset all buttons
         Object.keys(tabs).forEach(bId => {
           const b = document.getElementById(bId);
           b.className = 'nav-tab px-3.5 py-2 rounded-xl text-slate-400 hover:text-white transition-all flex items-center gap-2 whitespace-nowrap';
         });
-        // Highlight active button
         btn.className = 'nav-tab px-3.5 py-2 rounded-xl bg-cyan-500 text-slate-950 font-bold transition-all flex items-center gap-2 whitespace-nowrap';
 
-        // Hide all views, show active view
         document.querySelectorAll('.view-panel').forEach(v => v.classList.add('hidden'));
         view.classList.remove('hidden');
 
@@ -1334,7 +1318,7 @@ Requirements:
       });
     });
 
-    // File selection UI feedback
+    // File Input UI Feedback
     el.pdfFileInput.addEventListener('change', (e) => {
       const file = e.target.files[0];
       if (file) {
@@ -1343,7 +1327,7 @@ Requirements:
       }
     });
 
-    // Flashcard Controls
+    // Card Controls
     el.flashcardContainer.addEventListener('click', flipFlashcard);
     el.btnFlipCard.addEventListener('click', flipFlashcard);
 
@@ -1376,10 +1360,8 @@ Requirements:
       renderCurrentCard();
     });
 
-    // Pinyin Toggle
     el.btnTogglePinyin.addEventListener('click', togglePinyin);
 
-    // Shuffle Deck
     el.btnShuffleDeck.addEventListener('click', () => {
       for (let i = studyDeck.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -1390,7 +1372,6 @@ Requirements:
       showToast("Deck shuffled!");
     });
 
-    // Reset Deck
     el.btnResetDeck.addEventListener('click', () => {
       currentStudyIndex = 0;
       saveData();
@@ -1398,7 +1379,6 @@ Requirements:
       showToast("Restarted from card 1");
     });
 
-    // Audio Buttons
     el.btnAudioFront.addEventListener('click', (e) => {
       e.stopPropagation();
       if (studyDeck[currentStudyIndex]) speakMandarin(studyDeck[currentStudyIndex].hanzi);
@@ -1412,17 +1392,15 @@ Requirements:
       if (studyDeck[currentStudyIndex]) speakMandarin(studyDeck[currentStudyIndex].sentence);
     });
 
-    // Lesson Filter Change
     el.studyLessonFilter.addEventListener('change', () => {
       resetStudyDeck(true);
       saveData();
     });
 
-    // Browser Search & Filter
     el.browserSearch.addEventListener('input', renderVocabTable);
     el.browserLessonFilter.addEventListener('change', renderVocabTable);
 
-    // Export Downloads
+    // Export Handlers
     el.btnDownloadTab.addEventListener('click', () => {
       const header = "Hanzi\tPinyin\tMeaning\tExample_Sentence\tSentence_Translation\tTags\r\n";
       const rows = currentDeck.map(c => 
@@ -1458,7 +1436,6 @@ Requirements:
       showToast("Copied to clipboard!");
     });
 
-    // Backup and Restore JSON
     el.btnBackupJson.addEventListener('click', () => {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
         deck: currentDeck,
@@ -1493,19 +1470,19 @@ Requirements:
       reader.readAsText(file);
     });
 
-    // Settings Modal
     el.btnOpenSettings.addEventListener('click', () => {
       el.inputUserApiKey.value = localStorage.getItem(API_KEY_STORAGE) || "";
       el.settingsModal.classList.remove('hidden');
     });
     el.btnCloseSettings.addEventListener('click', () => el.settingsModal.classList.add('hidden'));
     el.btnSaveSettings.addEventListener('click', () => {
-      localStorage.setItem(API_KEY_STORAGE, el.inputUserApiKey.value.trim());
+      const key = el.inputUserApiKey.value.trim();
+      localStorage.setItem(API_KEY_STORAGE, key);
+      updateApiKeyUI(key);
       el.settingsModal.classList.add('hidden');
       showToast("Settings saved!");
     });
 
-    // Keyboard Shortcuts (Space = Flip, Arrows = Nav, P = Pinyin)
     window.addEventListener('keydown', (e) => {
       if (['input', 'textarea', 'select'].includes(document.activeElement.tagName.toLowerCase())) return;
       if (e.code === 'Space') {
@@ -1520,7 +1497,6 @@ Requirements:
       }
     });
 
-    // Window Init
     window.addEventListener('load', () => {
       loadSavedData();
       updateCountsAndFilters();
